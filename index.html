@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assignment Generator</title>
+<style>
+/* Assignment Generator design system.
+   Presentation only: tokens, layout polish, states, responsive rules. */
+:root{
+  --bg:#f3f5fa; --bg-top:#e8edfb;
+  --surface:#ffffff; --surface2:#eef1f8; --field:#fbfcfe;
+  --ink:#182238; --ink2:#525d78; --placeholder:#8a94ad;
+  --line:#dde3ef; --line-strong:#c6d0e3;
+  --accent:#3b5bdb; --accent2:#2f4bc0; --accent-soft:#e8edfd; --accent-ink:#2f4bc0;
+  --ok:#178a5b; --ok-bg:rgba(23,138,91,.10);
+  --warn:#b45309; --warn-bg:rgba(217,119,6,.12);
+  --err:#cf3f3f; --err-bg:rgba(207,63,63,.09);
+  --ring:rgba(59,91,219,.20);
+  --header-bg:rgba(255,255,255,.88);
+  --glow:rgba(59,91,219,.08);
+  --shadow-sm:0 1px 2px rgba(24,34,56,.05),0 1px 3px rgba(24,34,56,.06);
+  --shadow:0 12px 32px rgba(24,34,56,.10),0 2px 6px rgba(24,34,56,.05);
+  --shadow-lg:-18px 0 48px rgba(24,34,56,.18);
+  --btn-shadow:0 6px 16px rgba(59,91,219,.25);
+  --radius:16px; --r-sm:8px; --r-md:10px; --r-lg:20px;
+  --ease:cubic-bezier(.32,.72,.28,1);
+}
+[data-theme="dark"]{
+  --bg:#0d1120; --bg-top:#141b33;
+  --surface:#161c2f; --surface2:#1e2742; --field:#121828;
+  --ink:#edf0fa; --ink2:#a3adc7; --placeholder:#68738f;
+  --line:#2a3350; --line-strong:#3a466a;
+  --accent:#6d8dff; --accent2:#87a2ff; --accent-soft:#22305c; --accent-ink:#aebfff;
+  --ok:#3ecf8e; --ok-bg:rgba(62,207,142,.13);
+  --warn:#f5a524; --warn-bg:rgba(245,165,36,.13);
+  --err:#ff6b6b; --err-bg:rgba(255,107,107,.12);
+  --ring:rgba(109,141,255,.30);
+  --header-bg:rgba(13,17,32,.86);
+  --glow:rgba(109,141,255,.09);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.40);
+  --shadow:0 12px 32px rgba(0,0,0,.50),0 2px 6px rgba(0,0,0,.35);
+  --shadow-lg:-18px 0 48px rgba(0,0,0,.55);
+  --btn-shadow:0 6px 16px rgba(0,0,0,.40);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  background:linear-gradient(180deg,var(--bg-top),var(--bg) 260px) fixed,var(--bg);
+  color:var(--ink);line-height:1.55;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(560px 300px at 50% -60px,var(--glow),transparent 70%);
+}
+::selection{background:var(--accent-soft)}
+button{font:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--ink)}
+input::placeholder,textarea::placeholder{color:var(--placeholder)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 18px 64px}
+
+/* Header */
+header.top{
+  position:sticky;top:0;z-index:40;background:var(--header-bg);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);box-shadow:0 6px 24px rgba(24,34,56,.05);
+}
+.top-in{max-width:1060px;margin:0 auto;padding:13px 18px;display:flex;align-items:center;gap:13px}
+.logo{
+  width:40px;height:40px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),#7b5cff);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 14px rgba(59,91,219,.30);
+}
+.logo svg{width:22px;height:22px;stroke:#fff}
+h1.appname{font-size:21px;font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.2}
+.tagline{margin:1px 0 0;color:var(--ink2);font-size:13px}
+.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.icon-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  border-radius:var(--r-md);padding:8px 12px;font-size:14px;font-weight:500;
+  transition:border-color .18s var(--ease),background .18s var(--ease),transform .18s var(--ease);
+}
+.icon-btn svg{width:17px;height:17px;stroke:currentColor}
+.icon-btn:hover{border-color:var(--accent);background:var(--accent-soft)}
+.icon-btn:active{transform:translateY(1px)}
+#statusLine{font-size:13px;font-weight:500;color:var(--ink2);background:var(--surface2);border-bottom:1px solid var(--line)}
+#statusLine .in{max-width:1060px;margin:0 auto;padding:7px 18px}
+#statusLine.err{color:var(--err)}
+
+/* Step indicator */
+nav.steps{display:flex;gap:9px;flex-wrap:wrap;margin:24px 0 20px}
+.step-btn{
+  flex:1 1 150px;display:flex;align-items:center;gap:11px;text-align:left;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  border-radius:13px;padding:12px 14px;box-shadow:var(--shadow-sm);
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease),background .18s var(--ease);
+}
+.step-btn:hover{border-color:var(--line-strong);transform:translateY(-1px)}
+.step-btn .num{
+  width:28px;height:28px;border-radius:50%;background:var(--surface2);color:var(--ink2);
+  display:grid;place-items:center;font-weight:700;font-size:13px;flex:0 0 auto;
+  transition:background .18s var(--ease),color .18s var(--ease);
+}
+.step-btn>span:last-child{font-weight:600;font-size:14.5px;line-height:1.3}
+.step-btn small{display:block;color:var(--ink2);font-size:12px;font-weight:400;margin-top:1px}
+.step-btn.active{border-color:var(--accent);box-shadow:var(--shadow);background:linear-gradient(180deg,var(--surface),var(--accent-soft))}
+.step-btn.active .num{background:var(--accent);color:#fff;box-shadow:0 0 0 4px var(--ring)}
+.step-btn.active small{color:var(--accent-ink)}
+.step-btn.done .num{background:var(--ok);color:#fff}
+
+/* Cards and type */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;box-shadow:var(--shadow);margin-bottom:20px;
+}
+.card h2{margin:0 0 6px;font-size:19px;font-weight:700;letter-spacing:-.01em;position:relative;padding-left:15px}
+.card h2::before{
+  content:"";position:absolute;left:0;top:4px;bottom:4px;width:4px;border-radius:2px;
+  background:linear-gradient(180deg,var(--accent),#7b5cff);
+}
+.card h3{margin:18px 0 8px;font-size:15.5px;font-weight:650}
+.hint{color:var(--ink2);font-size:13.5px;line-height:1.5;margin:4px 0 12px}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--ink);margin:14px 0 6px;letter-spacing:.01em}
+
+/* Form fields */
+textarea.ta,input.in,select.in{
+  width:100%;border:1px solid var(--line);border-radius:var(--r-md);
+  background:var(--field);padding:11px 13px;font-size:14.5px;line-height:1.5;
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease);
+}
+textarea.ta,input.in,select.in:hover{border-color:var(--line-strong)}
+textarea.ta:focus,input.in:focus,select.in:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--ring);background:var(--surface);
+}
+textarea.ta:focus-visible,input.in:focus-visible,select.in:focus-visible{outline:none}
+select.in{
+  appearance:none;-webkit-appearance:none;padding-right:38px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23525d78' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right 13px center;
+}
+[data-theme="dark"] select.in{
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a3adc7' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
+}
+textarea.ta{min-height:120px;resize:vertical}
+textarea.ta.tall{min-height:230px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+/* Buttons */
+.btn{
+  border:1px solid var(--accent);color:#fff;border-radius:var(--r-md);
+  background:linear-gradient(180deg,var(--accent),var(--accent2));
+  padding:10px 17px;font-weight:600;font-size:14.5px;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:box-shadow .18s var(--ease),transform .18s var(--ease),background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease);
+}
+.btn svg{width:16px;height:16px;stroke:currentColor}
+.btn:hover{box-shadow:var(--btn-shadow);transform:translateY(-1px)}
+.btn:active{transform:translateY(0);box-shadow:none}
+.btn.secondary{background:var(--surface);color:var(--accent)}
+.btn.secondary:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow-sm)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn.ghost:hover{background:var(--surface2);border-color:var(--line-strong);box-shadow:var(--shadow-sm)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+
+/* Messages */
+.msg{border-radius:var(--r-md);padding:12px 14px;font-size:14px;line-height:1.55;margin-top:14px;display:none;border:1px solid var(--line);border-left-width:3px}
+.msg.show{display:block}
+.msg.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ink)}
+.msg.err{background:var(--err-bg);border-color:var(--err);color:var(--ink)}
+.msg.info{background:var(--surface2);border-color:var(--line-strong);color:var(--ink)}
+.msg a{font-weight:600}
+
+/* Learn step: task cards */
+.task-item{
+  border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:11px;
+  background:var(--surface2);box-shadow:var(--shadow-sm);
+  transition:border-color .18s var(--ease);
+}
+.task-item:hover{border-color:var(--line-strong)}
+.task-item textarea{min-height:74px;background:var(--surface)}
+.task-head{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.task-head b{font-size:14px}
+.task-head .sp{margin-left:auto}
+.mini-btn{
+  border:1px solid var(--line);background:var(--surface);border-radius:var(--r-sm);
+  padding:5px 10px;font-size:13px;color:var(--ink);
+  transition:border-color .18s var(--ease),color .18s var(--ease),background .18s var(--ease);
+}
+.mini-btn:hover{border-color:var(--err);color:var(--err);background:var(--err-bg)}
+
+/* Generate step: progress + editor */
+.prog-item{
+  display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:var(--r-md);
+  padding:11px 13px;margin-bottom:9px;background:var(--surface);
+  transition:border-color .18s var(--ease),background .18s var(--ease);
+}
+.prog-item .dot{width:11px;height:11px;border-radius:50%;background:var(--line-strong);flex:0 0 auto}
+.prog-item[data-st="working"]{border-color:var(--warn)}
+.prog-item[data-st="working"] .dot{background:var(--warn)}
+.prog-item[data-st="done"]{border-color:var(--ok)}
+.prog-item[data-st="done"] .dot{background:var(--ok)}
+.prog-item[data-st="error"]{border-color:var(--err)}
+.prog-item[data-st="error"] .dot{background:var(--err)}
+.prog-item .st{margin-left:auto;font-size:13px;color:var(--ink2)}
+.spin{width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;display:none;flex:0 0 auto}
+.prog-item[data-st="working"] .spin{display:block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.sec-edit{
+  border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:15px;
+  background:var(--surface);box-shadow:var(--shadow-sm);
+}
+.sec-edit h3{margin:0 0 9px}
+.sec-edit textarea{min-height:200px}
+.wordbar{
+  display:flex;gap:8px 18px;flex-wrap:wrap;font-size:13.5px;color:var(--ink2);
+  background:var(--surface2);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:10px 14px;margin:10px 0 14px;
+}
+.wordbar b{color:var(--ink)}
+
+/* Settings drawer */
+.drawer{
+  position:fixed;top:0;right:0;height:100dvh;width:min(430px,94vw);
+  background:var(--surface);border-left:1px solid var(--line);box-shadow:var(--shadow-lg);
+  z-index:60;transform:translateX(105%);transition:transform .26s var(--ease);
+  overflow-y:auto;padding:22px 22px 30px;scrollbar-width:thin;
+}
+.drawer::-webkit-scrollbar{width:9px}
+.drawer::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:5px}
+.drawer::-webkit-scrollbar-track{background:transparent}
+.drawer.open{transform:none}
+.drawer h2{margin:0 0 4px;font-size:19px;font-weight:700;letter-spacing:-.01em}
+.drawer h3{
+  margin:20px 0 4px;font-size:12.5px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink2);
+}
+.scrim{position:fixed;inset:0;background:rgba(10,14,26,.48);z-index:55;display:none;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.scrim.show{display:block}
+.kbd-note{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;
+  background:var(--surface2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;
+}
+.divider{border:0;border-top:1px solid var(--line);margin:20px 0;height:0}
+a{color:var(--accent);text-underline-offset:2px}
+a:hover{color:var(--accent-ink)}
+.hidden{display:none !important}
+footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
+
+/* Responsive */
+@media(max-width:720px){
+  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+  .card{padding:19px 16px}
+  .wrap{padding:0 12px 52px}
+  nav.steps{gap:7px;margin:18px 0 16px}
+  .step-btn{flex:1 1 140px;padding:11px 12px}
+  .top-in{padding:11px 12px}
+}
+@media(max-width:520px){
+  .tagline{display:none}
+  h1.appname{font-size:18px}
+  .icon-btn{padding:8px 10px}
+  .icon-btn span{display:none}
+  .btn{padding:10px 14px}
+  .wordbar{gap:6px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  .spin{animation:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+    <div>
+      <h1 class="appname">Assignment Generator</h1>
+      <p class="tagline">Paste a brief. It learns it, writes it in your school format, and exports to Word or Google Docs.</p>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle dark or light theme"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg><span>Theme</span></button>
+      <button class="icon-btn" id="settingsBtn" type="button" aria-label="Open settings"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.51 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.23.6.86 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg><span>Settings</span></button>
+    </div>
+  </div>
+  <div id="statusLine" role="status" aria-live="polite"><div class="in" id="statusText">Ready.</div></div>
+</header>
+
+<div class="wrap">
+  <nav class="steps" aria-label="Assignment steps">
+    <button class="step-btn active" type="button" data-step="1"><span class="num">1</span><span>Brief<small>Paste or upload the brief</small></span></button>
+    <button class="step-btn" type="button" data-step="2"><span class="num">2</span><span>Learn<small>Check what it found</small></span></button>
+    <button class="step-btn" type="button" data-step="3"><span class="num">3</span><span>Generate<small>Write and edit the draft</small></span></button>
+    <button class="step-btn" type="button" data-step="4"><span class="num">4</span><span>Export and Attach<small>Word, Google Doc, Classroom</small></span></button>
+  </nav>
+
+  <!-- STEP 1: BRIEF -->
+  <section class="card" id="panel-1" aria-labelledby="h-step1">
+    <h2 id="h-step1">Step 1 · Your assignment brief</h2>
+    <p class="hint">Paste the brief text, or upload a .txt or .docx brief file. Nothing leaves your device until you generate in Step 3.</p>
+    <label class="f" for="briefText">Brief text</label>
+    <textarea class="ta tall" id="briefText" placeholder="Paste the full assignment brief here: tasks, questions, word count, deadline, marking criteria."></textarea>
+    <div class="row">
+      <label class="btn secondary" for="briefFile" style="margin:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+        Upload .txt or .docx
+      </label>
+      <input class="hidden" type="file" id="briefFile" accept=".txt,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+      <span id="fileName" class="hint" style="margin:0"></span>
+      <button class="btn" id="parseBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        Learn my assignment
+      </button>
+    </div>
+    <div class="msg err" id="briefError" role="alert"></div>
+  </section>
+
+  <!-- STEP 2: LEARN -->
+  <section class="card hidden" id="panel-2" aria-labelledby="h-step2">
+    <h2 id="h-step2">Step 2 · What it learned</h2>
+    <p class="hint">This is the app reading of your brief. Fix anything before generating; the generator follows these fields.</p>
+    <div class="grid2">
+      <div><label class="f" for="fTitle">Assignment title</label><input class="in" id="fTitle" type="text"></div>
+      <div><label class="f" for="fSubject">Subject or module</label><input class="in" id="fSubject" type="text"></div>
+      <div><label class="f" for="fWords">Word count target (total)</label><input class="in" id="fWords" type="number" min="0" step="50" placeholder="e.g. 2500 (NMA band: 2000 to 3500)"></div>
+      <div><label class="f" for="fDeadline">Deadline (if found)</label><input class="in" id="fDeadline" type="text" placeholder="Not found in brief"></div>
+    </div>
+    <h3>Tasks and questions detected</h3>
+    <div id="tasksList"></div>
+    <button class="btn ghost" id="addTaskBtn" type="button">Add a task</button>
+    <label class="f" for="criteriaText">Marking criteria found in the brief</label>
+    <textarea class="ta" id="criteriaText" placeholder="No marking criteria detected. You can paste them here, or use the rubric in Settings."></textarea>
+    <div class="row">
+      <button class="btn secondary" id="backToBrief" type="button">Back to brief</button>
+      <button class="btn" id="toGenerateBtn" type="button">Looks right, go to generate</button>
+    </div>
+    <div class="msg err" id="learnError" role="alert"></div>
+  </section>
+
+  <!-- STEP 3: GENERATE -->
+  <section class="card hidden" id="panel-3" aria-labelledby="h-step3">
+    <h2 id="h-step3">Step 3 · Generate and edit</h2>
+    <p class="hint">The generator writes one section per task, follows your format profile and rubric from Settings, and cites only real, well known published sources in APA style.</p>
+    <div class="msg info show" id="genNoKey">
+      <b>No Anthropic API key yet.</b> Generation uses the Muse API from Anthropic, with your own key:
+      <ol style="margin:8px 0 4px 18px;padding:0">
+        <li>Open the <a href="https://console.anthropic.com/" target="_blank" rel="noopener">Claude Console</a> and sign in (or create an account).</li>
+        <li>Open <b>API Keys</b>, click <b>Create Key</b>, and copy the key.</li>
+        <li>Open <b>Settings</b> (top right), paste it into the Anthropic API key field, and come back here.</li>
+      </ol>
+      Note: the Muse API is a paid developer API. It is separate from a Claude subscription, and your Console account needs credit on it before generation will run.<br>
+      The key is stored only in this browser (localStorage). It is never sent anywhere except to Anthropic when you generate.
+    </div>
+    <div id="genControls" class="hidden">
+      <div class="row" style="margin-top:2px">
+        <button class="btn" id="genBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+          Generate assignment
+        </button>
+        <button class="btn ghost hidden" id="cancelBtn" type="button">Cancel</button>
+        <span class="hint" id="genMeta" style="margin:0"></span>
+      </div>
+      <div id="genProgress" style="margin-top:14px"></div>
+      <div class="msg err" id="genError" role="alert"></div>
+    </div>
+    <div id="editorWrap" class="hidden">
+      <div class="divider"></div>
+      <h3>Your assignment draft</h3>
+      <div class="wordbar"><span>Title: <b id="edTitleLabel"></b></span><span>Total words: <b id="totalWords">0</b></span><span>Target: <b id="targetWordsLabel">none set</b></span></div>
+      <div id="editorSections"></div>
+      <label class="f" for="refsText">Reference list (APA)</label>
+      <textarea class="ta" id="refsText" placeholder="References collected from the generated sections appear here. Edit freely before export."></textarea>
+    </div>
+  </section>
+
+  <!-- STEP 4: EXPORT -->
+  <section class="card hidden" id="panel-4" aria-labelledby="h-step4">
+    <h2 id="h-step4">Step 4 · Export and attach</h2>
+    <p class="hint">Word export applies your format profile: cover page first, then the sections, page numbers at the bottom center.</p>
+    <div class="row" style="margin-top:2px">
+      <button class="btn" id="exportDocxBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+        Download Word (.docx)
+      </button>
+      <span class="hint" id="exportMeta" style="margin:0"></span>
+    </div>
+    <div class="msg" id="exportMsg" role="status"></div>
+    <div class="divider"></div>
+    <h3>Google Docs and Classroom</h3>
+    <div class="msg info show" id="gGuide">
+      <b>One time Google setup.</b> The Google buttons need your own free OAuth Client ID:
+      <ol style="margin:8px 0 4px 18px;padding:0">
+        <li>Open the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console credentials page</a>, create a project if asked.</li>
+        <li>Enable the <b>Google Drive API</b> and <b>Google Classroom API</b> for that project.</li>
+        <li>Create an <b>OAuth client ID</b> of type <b>Web application</b>. Under Authorized JavaScript origins, add the address this page is opened from (for a local file it is shown as <span class="kbd-note">null</span> origin, so host the page on any static site, for example GitHub Pages, and add that origin).</li>
+        <li>Copy the Client ID into <b>Settings</b>, then use Connect Google below.</li>
+      </ol>
+    </div>
+    <div class="row">
+      <button class="btn secondary" id="gConnectBtn" type="button">Connect Google</button>
+      <span class="hint" id="gStatus" style="margin:0" role="status">Not connected.</span>
+    </div>
+    <div class="row">
+      <button class="btn" id="gCreateBtn" type="button" disabled>Create Google Doc</button>
+      <a id="gDocLink" href="#" target="_blank" rel="noopener" class="hidden">Open the created Google Doc</a>
+    </div>
+    <div class="grid2">
+      <div><label class="f" for="gCourseSel">Your Classroom course</label><select class="in" id="gCourseSel"><option value="">Connect Google first</option></select></div>
+      <div><label class="f" for="gWorkSel">Coursework</label><select class="in" id="gWorkSel"><option value="">Pick a course first</option></select></div>
+    </div>
+    <div class="row">
+      <button class="btn secondary" id="gRefreshBtn" type="button" disabled>Load my courses</button>
+      <button class="btn" id="gAttachBtn" type="button" disabled>Attach Doc to my submission</button>
+    </div>
+    <div class="msg" id="gMsg" role="status"></div>
+    <p class="hint">Attach adds the created Google Doc to your own student submission for the chosen coursework. It does not turn the work in; you still press Turn in inside Classroom yourself.</p>
+  </section>
+
+  <footer class="foot">Assignment Generator runs fully in your browser. Your brief, keys and drafts stay on this device.</footer>
+</div>
+
+<!-- SETTINGS DRAWER -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="settingsDrawer" aria-label="Settings">
+  <div style="display:flex;align-items:center;gap:10px">
+    <h2>Settings</h2>
+    <button class="icon-btn" id="closeSettingsBtn" type="button" style="margin-left:auto" aria-label="Close settings"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </div>
+  <p class="hint">Everything here is saved in this browser only (localStorage).</p>
+
+  <h3>AI writing (Anthropic Muse)</h3>
+  <label class="f" for="setApiKey">Anthropic API key</label>
+  <input class="in" id="setApiKey" type="password" autocomplete="off" placeholder="Paste your key from the Claude Console">
+  <label class="f" for="setModel">Model</label>
+  <select class="in" id="setModel">
+    <option value="claude-sonnet-4-5">claude-sonnet-4-5 (Sonnet 4.5, default)</option>
+    <option value="claude-opus-4-1">claude-opus-4-1 (Opus 4.1)</option>
+    <option value="claude-haiku-4-5">claude-haiku-4-5 (Haiku 4.5, fastest)</option>
+  </select>
+  <label class="f" for="setModelCustom">Custom model (optional, overrides the list above)</label>
+  <input class="in" id="setModelCustom" type="text" autocomplete="off" placeholder="Leave empty to use the list">
+
+  <div class="divider"></div>
+  <h3>Google connection</h3>
+  <label class="f" for="setClientId">Google OAuth Client ID</label>
+  <input class="in" id="setClientId" type="text" autocomplete="off" placeholder="1234567890-abc.apps.googleusercontent.com">
+
+  <div class="divider"></div>
+  <h3>School format profile</h3>
+  <p class="hint">Prefilled with the NMA College format. Update these values here any time your school format changes, and every export follows the new profile.</p>
+  <div class="grid2">
+    <div><label class="f" for="pfFont">Font</label><input class="in" id="pfFont" type="text"></div>
+    <div><label class="f" for="pfRefStyle">Referencing style</label><input class="in" id="pfRefStyle" type="text"></div>
+    <div><label class="f" for="pfHeadSize">Heading size (pt)</label><input class="in" id="pfHeadSize" type="number" min="8" max="32"></div>
+    <div><label class="f" for="pfBodySize">Body size (pt)</label><input class="in" id="pfBodySize" type="number" min="8" max="24"></div>
+    <div><label class="f" for="pfSpacing">Line spacing</label><input class="in" id="pfSpacing" type="number" min="1" max="3" step="0.1"></div>
+    <div><label class="f" for="pfPageNum">Page numbers</label>
+      <select class="in" id="pfPageNum"><option value="bottom-center">Bottom center</option><option value="bottom-right">Bottom right</option><option value="none">None</option></select></div>
+    <div><label class="f" for="pfML">Margin left (in)</label><input class="in" id="pfML" type="number" min="0.3" max="3" step="0.1"></div>
+    <div><label class="f" for="pfMR">Margin right (in)</label><input class="in" id="pfMR" type="number" min="0.3" max="3" step="0.1"></div>
+    <div><label class="f" for="pfMT">Margin top (in)</label><input class="in" id="pfMT" type="number" min="0.3" max="3" step="0.1"></div>
+    <div><label class="f" for="pfMB">Margin bottom (in)</label><input class="in" id="pfMB" type="number" min="0.3" max="3" step="0.1"></div>
+  </div>
+  <h3>Cover page</h3>
+  <p class="hint">School cover page pattern: a bold module line, a two column Submitted to and Submitted by block, a centered cohort line such as L-4 B-24 On Campus, and a centered Date of Submitted line. A brief's own instructions always override this sample format.</p>
+  <div class="grid2">
+    <div><label class="f" for="pfStudent">Student name</label><input class="in" id="pfStudent" type="text" placeholder="Your full name"></div>
+    <div><label class="f" for="pfCourse">Course</label><input class="in" id="pfCourse" type="text" placeholder="e.g. BBA Program"></div>
+    <div><label class="f" for="pfModule">Module</label><input class="in" id="pfModule" type="text" placeholder="Filled from the brief if found"></div>
+    <div><label class="f" for="pfTeacher">Teacher</label><input class="in" id="pfTeacher" type="text" placeholder="Optional"></div>
+  </div>
+
+  <div class="divider"></div>
+  <h3>Scoring rubric</h3>
+  <p class="hint">Prefilled with the real NMA College marking rules from the BBA Program Academic Writing class. The generator writes to score well against this rubric; edit it any time your school scheme changes.</p>
+  <label class="f" for="rubricText">Rubric text</label>
+  <textarea class="ta" id="rubricText" style="min-height:170px"></textarea>
+  <div class="row"><button class="btn" id="saveSettingsBtn" type="button">Save settings</button><span class="hint" id="saveNote" style="margin:0" role="status"></span></div>
+</aside>
+
+<script>
+"use strict";
+/* Assignment Generator. All logic is client side. Init is wrapped so one
+   failure cannot kill the whole app; errors surface in the status line. */
+
+var LS_SETTINGS = "ag.settings.v1";
+var LS_ANTHROPIC_KEY = "asngen:anthropicKey";
+var LS_PROFILE  = "ag.profile.v1";
+var LS_RUBRIC   = "ag.rubric.v1";
+
+var DEFAULT_PROFILE = {
+  font: "Times New Roman", headingSize: 14, bodySize: 12, lineSpacing: 1.5,
+  marginL: 1.5, marginR: 1.0, marginT: 1.0, marginB: 1.0,
+  pageNum: "bottom-center", refStyle: "APA",
+  student: "Thit Sar", course: "BBA Program", module: "", teacher: ""
+};
+
+var DEFAULT_RUBRIC = [
+  "Marked out of 100 points. ATHE grading: Pass criteria cover the learning outcomes (LO1 to LO4); Merit criteria (M1 to M3) need analysis and evaluation with specific business examples; Distinction criteria (D1 to D3) need justified recommendations and evaluation of benefits and limits. Write to Distinction standard. Similarity index must stay under 20 percent. Work is not accepted after the due date."
+].join("\n");
+
+var S = {
+  settings: { clientId: "", model: "claude-sonnet-4-5", modelCustom: "" },
+  anthropicKey: "",
+  profile: JSON.parse(JSON.stringify(DEFAULT_PROFILE)),
+  rubric: DEFAULT_RUBRIC,
+  parsed: { title: "", subject: "", words: 0, deadline: "", tasks: [], criteria: "" },
+  sections: [],            /* {heading, task, text, status, error} */
+  generating: false,
+  cancelRequested: false,
+  abort: null,
+  google: { token: null, docId: "", docUrl: "" },
+  step: 1
+};
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function setStatus(text, isErr){
+  var el = $("statusText"); if (el) el.textContent = text;
+  var bar = $("statusLine"); if (bar) bar.className = isErr ? "err" : "";
+}
+function showMsg(id, text, kind){
+  var el = $(id); if (!el) return;
+  el.textContent = text || "";
+  el.className = "msg" + (text ? " show " + (kind || "info") : "");
+}
+function loadLS(key, fallback){
+  try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch(e){ return fallback; }
+}
+function saveLS(key, val){
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){ /* storage full or blocked */ }
+}
+function countWords(text){
+  var m = String(text || "").trim().match(/\S+/g);
+  return m ? m.length : 0;
+}
+
+/* ---------- Humanizer post-processing ----------
+   Hard rule: no em dash characters ever reach the output. */
+function humanize(text){
+  var t = String(text || "");
+  t = t.replace(/\u2014/g, ", ");          /* em dash to comma */
+  t = t.replace(/\s--\s/g, ", ");          /* typed double dash */
+  t = t.replace(/\*\*(.+?)\*\*/g, "$1");   /* strip bold markers */
+  t = t.replace(/__(.+?)__/g, "$1");
+  t = t.replace(/^#{1,6}\s+/gm, "");       /* strip markdown heading marks */
+  t = t.replace(/^\s*[-*]\s+/gm, function(m){ return m; });
+  t = t.replace(/,\s*,/g, ",");
+  t = t.replace(/[ \t]{2,}/g, " ");
+  t = t.replace(/\n{3,}/g, "\n\n");
+  return t.trim();
+}
+
+/* ---------- Brief parsing (deterministic heuristics) ---------- */
+function parseBrief(raw){
+  var text = String(raw || "").replace(/\r\n/g, "\n");
+  var lines = text.split("\n");
+  var out = { title: "", subject: "", words: 0, deadline: "", tasks: [], criteria: "" };
+
+  /* Title: first short non-empty line */
+  for (var i = 0; i < lines.length; i++){
+    var l = lines[i].trim();
+    if (l && l.length <= 110 && !/^(task|question|q)\b/i.test(l)){ out.title = l; break; }
+  }
+
+  /* Word target */
+  var wm = text.match(/(\d[\d,]{1,6})\s*(?:words|word\s*count)/i) || text.match(/word\s*count[^0-9]{0,12}(\d[\d,]{1,6})/i);
+  if (wm) out.words = parseInt(wm[1].replace(/,/g, ""), 10) || 0;
+
+  /* Subject or module */
+  var sm = text.match(/(?:module|subject|course|unit)\s*(?:title|name)?\s*[:\-]\s*([^\n]{3,90})/i);
+  if (sm) out.subject = sm[1].trim();
+
+  /* Deadline */
+  var dm = text.match(/(?:deadline|due\s*date|submission\s*date|submit\s*(?:by|on))\s*[:\-]?\s*([^\n]{4,60})/i);
+  if (dm) out.deadline = dm[1].trim().replace(/\s{2,}/g, " ");
+  if (!out.deadline){
+    var months = "January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec";
+    var dAny = text.match(new RegExp("\\b(\\d{1,2}(?:st|nd|rd|th)?\\s+(?:" + months + ")\\s+\\d{4}|(?:" + months + ")\\s+\\d{1,2}(?:st|nd|rd|th)?,?\\s+\\d{4}|\\d{1,2}[\\/.\\-]\\d{1,2}[\\/.\\-]\\d{2,4})\\b", "i"));
+    if (dAny) out.deadline = dAny[1];
+  }
+
+  /* Marking criteria block */
+  var cm = text.match(/(?:marking|assessment|grading)\s*criteria[^\n]*\n([\s\S]{0,1200})/i);
+  if (cm){
+    var block = cm[1].split(/\n\s*\n/)[0].trim();
+    if (block.length > 10) out.criteria = block;
+  }
+
+  /* Tasks: markers are "Task 1", "Question 2", "Q3", "1." / "1)" at line start,
+     or a standalone line ending with "?". Text runs until the next marker. */
+  var markerRe = /^\s*(?:(task|question|q)\s*(\d{1,2})\b[:\.\)]?\s*|(\d{1,2})[\.\)]\s+)(.*)$/i;
+  var tasks = [];
+  var current = null;
+  function flush(){ if (current && current.text.trim().length > 0) tasks.push(current); current = null; }
+  for (var j = 0; j < lines.length; j++){
+    var line = lines[j];
+    var mm = line.match(markerRe);
+    var isQuestionLine = /^\s*\S.*\?\s*$/.test(line) && line.trim().length <= 300 && !current;
+    if (mm){
+      flush();
+      var label = mm[1] ? (mm[1].charAt(0).toUpperCase() + mm[1].slice(1).toLowerCase() + " " + mm[2])
+                       : ("Part " + mm[3]);
+      current = { label: label, text: (mm[4] || "").trim() };
+    } else if (isQuestionLine){
+      flush();
+      current = { label: "Question " + (tasks.length + 1), text: line.trim() };
+    } else if (current){
+      current.text += "\n" + line;
+    }
+  }
+  flush();
+  tasks = tasks.filter(function(t){ return t.text.replace(/\s/g, "").length >= 8; })
+               .map(function(t){ t.text = t.text.trim().replace(/\n{3,}/g, "\n\n"); return t; });
+
+  if (!tasks.length){
+    /* Fallback: paragraph chunks, else the whole brief as one task. */
+    var chunks = text.split(/\n\s*\n/).map(function(c){ return c.trim(); })
+                     .filter(function(c){ return c.length >= 60; });
+    if (chunks.length > 1) tasks = chunks.map(function(c, k){ return { label: "Task " + (k + 1), text: c }; });
+    else if (text.trim()) tasks = [{ label: "Task 1", text: text.trim() }];
+  }
+  out.tasks = tasks.slice(0, 12);
+  return out;
+}
+
+/* ---------- Wizard ---------- */
+function goStep(n){
+  S.step = n;
+  for (var i = 1; i <= 4; i++){
+    var p = $("panel-" + i); if (p) p.classList.toggle("hidden", i !== n);
+  }
+  var btns = document.querySelectorAll(".step-btn");
+  btns.forEach(function(b){
+    var s = parseInt(b.getAttribute("data-step"), 10);
+    b.classList.toggle("active", s === n);
+    b.classList.toggle("done", s < n);
+  });
+  if (n === 3) refreshGenGate();
+  try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch(e){ try { window.scrollTo(0, 0); } catch(e2){} }
+}
+
+/* ---------- Settings ---------- */
+function collectSettingsFromUI(){
+  S.anthropicKey = $("setApiKey").value.trim();
+  S.settings.clientId = $("setClientId").value.trim();
+  S.settings.model = $("setModel").value || "claude-sonnet-4-5";
+  S.settings.modelCustom = $("setModelCustom").value.trim();
+  S.profile.font = $("pfFont").value.trim() || DEFAULT_PROFILE.font;
+  S.profile.refStyle = $("pfRefStyle").value.trim() || "APA";
+  S.profile.headingSize = parseFloat($("pfHeadSize").value) || 14;
+  S.profile.bodySize = parseFloat($("pfBodySize").value) || 12;
+  S.profile.lineSpacing = parseFloat($("pfSpacing").value) || 1.5;
+  S.profile.pageNum = $("pfPageNum").value;
+  S.profile.marginL = parseFloat($("pfML").value) || 1.5;
+  S.profile.marginR = parseFloat($("pfMR").value) || 1;
+  S.profile.marginT = parseFloat($("pfMT").value) || 1;
+  S.profile.marginB = parseFloat($("pfMB").value) || 1;
+  S.profile.student = $("pfStudent").value;
+  S.profile.course = $("pfCourse").value;
+  S.profile.module = $("pfModule").value;
+  S.profile.teacher = $("pfTeacher").value;
+  S.rubric = $("rubricText").value;
+}
+function fillSettingsUI(){
+  $("setApiKey").value = S.anthropicKey || "";
+  $("setClientId").value = S.settings.clientId || "";
+  $("setModel").value = S.settings.model || "claude-sonnet-4-5";
+  if (!$("setModel").value) $("setModel").value = "claude-sonnet-4-5"; /* stored model no longer listed (e.g. an old one): fall back to default */
+  $("setModelCustom").value = S.settings.modelCustom || "";
+  $("pfFont").value = S.profile.font;
+  $("pfRefStyle").value = S.profile.refStyle;
+  $("pfHeadSize").value = S.profile.headingSize;
+  $("pfBodySize").value = S.profile.bodySize;
+  $("pfSpacing").value = S.profile.lineSpacing;
+  $("pfPageNum").value = S.profile.pageNum;
+  $("pfML").value = S.profile.marginL;
+  $("pfMR").value = S.profile.marginR;
+  $("pfMT").value = S.profile.marginT;
+  $("pfMB").value = S.profile.marginB;
+  $("pfStudent").value = S.profile.student || "";
+  $("pfCourse").value = S.profile.course || "";
+  $("pfModule").value = S.profile.module || "";
+  $("pfTeacher").value = S.profile.teacher || "";
+  $("rubricText").value = S.rubric || "";
+}
+function persistAll(){
+  collectSettingsFromUI();
+  try { localStorage.setItem(LS_ANTHROPIC_KEY, S.anthropicKey || ""); } catch(e){ /* storage full or blocked */ }
+  saveLS(LS_SETTINGS, S.settings);
+  saveLS(LS_PROFILE, S.profile);
+  saveLS(LS_RUBRIC, S.rubric);
+}
+function openSettings(){ fillSettingsUI(); $("settingsDrawer").classList.add("open"); $("scrim").classList.add("show"); }
+function closeSettings(){ persistAll(); $("settingsDrawer").classList.remove("open"); $("scrim").classList.remove("show"); refreshGenGate(); }
+
+/* ---------- Brief file upload ---------- */
+function loadScriptOnce(src){
+  return new Promise(function(resolve, reject){
+    var existing = document.querySelector('script[data-src="' + src + '"]');
+    if (existing){ resolve(); return; }
+    var s = document.createElement("script");
+    s.src = src; s.setAttribute("data-src", src);
+    s.onload = function(){ resolve(); };
+    s.onerror = function(){ reject(new Error("Could not load " + src)); };
+    document.head.appendChild(s);
+  });
+}
+function readBriefFile(file){
+  showMsg("briefError", "");
+  $("fileName").textContent = file.name;
+  var name = file.name.toLowerCase();
+  if (name.endsWith(".txt")){
+    var r = new FileReader();
+    r.onload = function(){ $("briefText").value = String(r.result || ""); setStatus("Brief loaded from " + file.name + "."); };
+    r.onerror = function(){ showMsg("briefError", "Could not read that text file. Try pasting the brief instead.", "err"); };
+    r.readAsText(file);
+    return;
+  }
+  if (name.endsWith(".docx")){
+    loadScriptOnce("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js")
+      .then(function(){
+        if (!window.mammoth) throw new Error("Parser unavailable");
+        return file.arrayBuffer();
+      })
+      .then(function(buf){ return window.mammoth.extractRawText({ arrayBuffer: buf }); })
+      .then(function(res){
+        $("briefText").value = res.value || "";
+        setStatus("Brief text extracted from " + file.name + ".");
+      })
+      .catch(function(){
+        showMsg("briefError", "Could not parse that .docx file. The Word text extractor (mammoth, loaded from a CDN) may be blocked, or the file is damaged. You can open the document, copy its text, and paste it above instead.", "err");
+      });
+    return;
+  }
+  showMsg("briefError", "That file type is not supported. Upload a .txt or .docx brief, or paste the text.", "err");
+}
+
+/* ---------- Learn step rendering ---------- */
+function renderLearn(){
+  var p = S.parsed;
+  $("fTitle").value = p.title || "";
+  $("fSubject").value = p.subject || "";
+  $("fWords").value = p.words || "";
+  $("fDeadline").value = p.deadline || "";
+  $("criteriaText").value = p.criteria || "";
+  var list = $("tasksList");
+  list.innerHTML = "";
+  p.tasks.forEach(function(t, idx){ list.appendChild(taskItemEl(t, idx)); });
+  if (!p.tasks.length) showMsg("learnError", "No tasks were detected. Add at least one task below before generating.", "err");
+  else showMsg("learnError", "");
+}
+function taskItemEl(t, idx){
+  var div = document.createElement("div");
+  div.className = "task-item";
+  div.innerHTML = '<div class="task-head"><b>' + esc(t.label) + '</b><span class="sp"></span>' +
+    '<button type="button" class="mini-btn" data-del="' + idx + '" aria-label="Remove this task">Remove</button></div>' +
+    '<textarea class="ta" data-task="' + idx + '" aria-label="Task text">' + esc(t.text) + '</textarea>';
+  div.querySelector("[data-del]").addEventListener("click", function(){
+    syncLearnFromUI();
+    S.parsed.tasks.splice(idx, 1);
+    renderLearn();
+  });
+  return div;
+}
+function syncLearnFromUI(){
+  S.parsed.title = $("fTitle").value.trim();
+  S.parsed.subject = $("fSubject").value.trim();
+  S.parsed.words = parseInt($("fWords").value, 10) || 0;
+  S.parsed.deadline = $("fDeadline").value.trim();
+  S.parsed.criteria = $("criteriaText").value;
+  var areas = document.querySelectorAll("[data-task]");
+  var tasks = [];
+  areas.forEach(function(a){
+    var idx = parseInt(a.getAttribute("data-task"), 10);
+    var old = S.parsed.tasks[idx];
+    tasks.push({ label: old ? old.label : ("Task " + (idx + 1)), text: a.value });
+  });
+  if (areas.length) S.parsed.tasks = tasks;
+}
+</script>
+
+<script>
+"use strict";
+/* ---------- Generation (Anthropic Muse; engine swapped from Gemini) ---------- */
+function refreshGenGate(){
+  var hasKey = !!(S.anthropicKey || ($("setApiKey") && $("setApiKey").value.trim()));
+  $("genNoKey").classList.toggle("hidden", hasKey);
+  $("genNoKey").classList.toggle("show", !hasKey);
+  $("genControls").classList.toggle("hidden", !hasKey);
+}
+function formatProfileText(){
+  var p = S.profile;
+  return "School format profile: font " + p.font + "; headings " + p.headingSize + "pt bold; body " + p.bodySize +
+    "pt; line spacing " + p.lineSpacing + "; margins left " + p.marginL + "in, right " + p.marginR + "in, top " +
+    p.marginT + "in, bottom " + p.marginB + "in; page numbers " + p.pageNum + "; referencing style " + p.refStyle +
+    ". Formatting is applied by the app at export; your job is the text structure: a clear heading line, then prose paragraphs.";
+}
+function buildSystemPrompt(){
+  var rubric = (S.parsed.criteria && S.parsed.criteria.trim()) ?
+    ("Marking criteria from the brief:\n" + S.parsed.criteria + "\n\nRubric from settings:\n" + S.rubric) : S.rubric;
+  return [
+    "You are an expert academic writer helping a BBA student at NMA College.",
+    formatProfileText(),
+    "",
+    "SCORING RUBRIC. Write so this work scores at the top band against it:",
+    rubric,
+    "",
+    "REFERENCING RULES (strict):",
+    "- Cite only real, well known, genuinely published sources (established textbooks and widely cited journal articles you are confident exist).",
+    "- Never invent a source, author, year, journal or page number. If you are unsure a source is real, do not cite it.",
+    "- Use " + S.profile.refStyle + " in-text citations, for example (Atrill and McLaney, 2019), woven naturally into sentences.",
+    "- End your answer with a line containing only the word References, followed by the full reference list entries for the sources you cited in this section, one per line, in " + S.profile.refStyle + " style.",
+    "",
+    "HUMANIZER RULES (strict):",
+    "- Write like a strong human student: vary sentence length a lot, mix short direct sentences with longer developed ones.",
+    "- Use natural transitions (this means, in practice, for example, as a result). Avoid repeating stock phrases; never spam words like furthermore or moreover.",
+    "- Occasional natural contractions are fine where they suit academic writing (for example, do not overuse them).",
+    "- Be specific and concrete: name real concepts, figures from the brief, and worked detail instead of vague generalities.",
+    "- Never use the em dash character anywhere. Use commas, colons or full stops instead.",
+    "- Write in prose paragraphs. Do not use bullet lists inside a section unless the task itself asks for a list.",
+    "- Do not use markdown formatting, asterisks or hash symbols."
+  ].join("\n");
+}
+function effectiveModel(){
+  var custom = (S.settings.modelCustom || "").trim();
+  if (custom) return custom;
+  return S.settings.model || "claude-sonnet-4-5";
+}
+function claudeCall(systemText, userText){
+  S.abort = ("AbortController" in window) ? new AbortController() : null;
+  return fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": S.anthropicKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    signal: S.abort ? S.abort.signal : undefined,
+    body: JSON.stringify({
+      model: effectiveModel(),
+      max_tokens: 8192,
+      system: systemText,
+      messages: [{ role: "user", content: userText }]
+    })
+  }).then(function(res){
+    return res.json().then(function(data){
+      if (!res.ok){
+        var msg = (data && data.error && data.error.message) ? data.error.message : ("HTTP " + res.status);
+        throw new Error("Muse error: " + msg);
+      }
+      var blocks = (data && data.content) || [];
+      var text = "";
+      blocks.forEach(function(b){ if (b && b.type === "text" && b.text) text += b.text; });
+      if (!text) throw new Error("Muse returned an empty section. Try again, or switch the model in Settings.");
+      return text;
+    });
+  });
+}
+function splitReferences(text){
+  var m = text.match(/\n\s*References\s*\n/i);
+  if (!m) return { body: text, refs: [] };
+  var body = text.slice(0, m.index).trim();
+  var refBlock = text.slice(m.index + m[0].length).trim();
+  var refs = refBlock.split("\n").map(function(r){ return r.trim(); }).filter(function(r){ return r.length > 8; });
+  return { body: body, refs: refs };
+}
+function renderProgress(){
+  var wrap = $("genProgress");
+  wrap.innerHTML = "";
+  S.sections.forEach(function(sec, idx){
+    var div = document.createElement("div");
+    div.className = "prog-item";
+    div.setAttribute("data-st", sec.status);
+    var label = sec.status === "working" ? "Writing" : sec.status === "done" ? "Done" :
+                sec.status === "error" ? "Failed" : "Waiting";
+    div.innerHTML = '<span class="dot" aria-hidden="true"></span><span class="spin" aria-hidden="true"></span>' +
+      '<span><b>' + esc(sec.heading) + '</b></span><span class="st">' + label +
+      (sec.status === "done" ? " · " + countWords(sec.text) + " words" : "") + '</span>';
+    if (sec.status === "error"){
+      var btn = document.createElement("button");
+      btn.type = "button"; btn.className = "mini-btn"; btn.textContent = "Retry this section";
+      btn.addEventListener("click", function(){ retrySection(idx); });
+      div.appendChild(btn);
+    }
+    wrap.appendChild(div);
+  });
+}
+function renderEditor(){
+  var wrap = $("editorWrap");
+  var has = S.sections.some(function(s){ return s.status === "done"; });
+  wrap.classList.toggle("hidden", !has);
+  if (!has) return;
+  $("edTitleLabel").textContent = S.parsed.title || "Untitled assignment";
+  $("targetWordsLabel").textContent = S.parsed.words ? String(S.parsed.words) : "none set";
+  var holder = $("editorSections");
+  holder.innerHTML = "";
+  S.sections.forEach(function(sec, idx){
+    if (sec.status !== "done") return;
+    var div = document.createElement("div");
+    div.className = "sec-edit";
+    div.innerHTML = "<h3>" + esc(sec.heading) + "</h3>";
+    var ta = document.createElement("textarea");
+    ta.className = "ta"; ta.value = sec.text;
+    ta.setAttribute("aria-label", "Edit section " + sec.heading);
+    ta.addEventListener("input", function(){ S.sections[idx].text = ta.value; updateWordCount(); });
+    div.appendChild(ta);
+    holder.appendChild(div);
+  });
+  updateWordCount();
+}
+function updateWordCount(){
+  var total = 0;
+  S.sections.forEach(function(s){ if (s.status === "done") total += countWords(s.text); });
+  total += countWords($("refsText").value);
+  $("totalWords").textContent = String(total);
+}
+function collectReferences(newRefs){
+  var existing = $("refsText").value.split("\n").map(function(r){ return r.trim(); }).filter(Boolean);
+  var seen = {};
+  existing.forEach(function(r){ seen[r.toLowerCase()] = true; });
+  newRefs.forEach(function(r){
+    var key = r.toLowerCase();
+    if (!seen[key]){ existing.push(r); seen[key] = true; }
+  });
+  $("refsText").value = existing.join("\n");
+}
+function runSection(idx, systemText){
+  var sec = S.sections[idx];
+  sec.status = "working"; sec.error = "";
+  renderProgress();
+  var perTask = S.parsed.words ? Math.max(250, Math.round(S.parsed.words / Math.max(1, S.parsed.tasks.length))) : 600;
+  var userText = "Assignment title: " + (S.parsed.title || "Untitled") +
+    "\nSubject or module: " + (S.parsed.subject || S.profile.module || "General") +
+    "\n\nWrite the section for this task now:\n" + sec.task +
+    "\n\nTarget length for this section: about " + perTask + " words. Start with the heading line: " + sec.heading +
+    "\nThen the section in prose paragraphs. Follow all system rules, including the References block at the end.";
+  return claudeCall(systemText, userText).then(function(raw){
+    var split = splitReferences(humanize(raw));
+    sec.text = split.body;
+    sec.status = "done";
+    collectReferences(split.refs);
+    renderProgress(); renderEditor();
+  }).catch(function(err){
+    if (S.cancelRequested){ sec.status = "idle"; }
+    else { sec.status = "error"; sec.error = err.message || String(err); }
+    renderProgress();
+    throw err;
+  });
+}
+function generateAll(){
+  syncLearnFromUI();
+  if (!S.anthropicKey){ refreshGenGate(); showMsg("genError", "Add your Anthropic API key in Settings first. The guide above Step 3 explains how to get one from the Claude Console.", "err"); return; }
+  if (!S.parsed.tasks.length){ showMsg("genError", "No tasks yet. Go back to Step 2 and add at least one task.", "err"); return; }
+  showMsg("genError", "");
+  S.generating = true; S.cancelRequested = false;
+  $("genBtn").disabled = true; $("cancelBtn").classList.remove("hidden");
+  S.sections = S.parsed.tasks.map(function(t){
+    return { heading: t.label, task: t.text, text: "", status: "idle", error: "" };
+  });
+  renderProgress();
+  var systemText = buildSystemPrompt();
+  var chain = Promise.resolve();
+  S.sections.forEach(function(sec, idx){
+    chain = chain.then(function(){
+      if (S.cancelRequested) return null;
+      return runSection(idx, systemText).catch(function(){ /* error recorded on the section */ });
+    });
+  });
+  chain.then(function(){
+    S.generating = false;
+    $("genBtn").disabled = false; $("cancelBtn").classList.add("hidden");
+    var failed = S.sections.filter(function(s){ return s.status === "error"; });
+    var done = S.sections.filter(function(s){ return s.status === "done"; });
+    if (S.cancelRequested) setStatus("Generation cancelled. Finished sections are kept in the editor.");
+    else if (failed.length) showMsg("genError", "Some sections failed: " + failed.map(function(s){ return s.heading + " (" + (s.error || "error") + ")"; }).join("; ") + ". Use the retry button on a failed section.", "err");
+    else setStatus("Generation complete: " + done.length + " sections, " + $("totalWords").textContent + " words. Review and edit in Step 3, then export in Step 4.");
+    if (done.length) renderEditor();
+  });
+}
+function retrySection(idx){
+  if (S.generating) return;
+  showMsg("genError", "");
+  S.cancelRequested = false;
+  S.generating = true; $("genBtn").disabled = true; $("cancelBtn").classList.remove("hidden");
+  runSection(idx, buildSystemPrompt()).catch(function(){ /* recorded */ }).then(function(){
+    S.generating = false;
+    $("genBtn").disabled = false; $("cancelBtn").classList.add("hidden");
+    renderEditor();
+  });
+}
+function fullText(){
+  var parts = [];
+  S.sections.forEach(function(s){ if (s.status === "done") parts.push({ heading: s.heading, text: s.text }); });
+  return parts;
+}
+</script>
+
+<script>
+"use strict";
+/* ---------- Word .docx export (hand-rolled OOXML, no library needed) ---------- */
+function xmlEsc(s){
+  return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function utf8(str){
+  if (typeof TextEncoder !== "undefined") return new TextEncoder().encode(str);
+  var out = [];  /* fallback UTF-8 encoder for older webviews */
+  for (var i = 0; i < str.length; i++){
+    var cp = str.codePointAt(i);
+    if (cp > 0xFFFF) i++;
+    if (cp < 0x80) out.push(cp);
+    else if (cp < 0x800){ out.push(0xC0 | (cp >> 6), 0x80 | (cp & 0x3F)); }
+    else if (cp < 0x10000){ out.push(0xE0 | (cp >> 12), 0x80 | ((cp >> 6) & 0x3F), 0x80 | (cp & 0x3F)); }
+    else { out.push(0xF0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3F), 0x80 | ((cp >> 6) & 0x3F), 0x80 | (cp & 0x3F)); }
+  }
+  return new Uint8Array(out);
+}
+var CRC_TABLE = null;
+function crc32(bytes){
+  if (!CRC_TABLE){
+    CRC_TABLE = [];
+    for (var n = 0; n < 256; n++){
+      var c = n;
+      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      CRC_TABLE[n] = c >>> 0;
+    }
+  }
+  var crc = 0xFFFFFFFF;
+  for (var i = 0; i < bytes.length; i++) crc = CRC_TABLE[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function zipStore(files){
+  /* Minimal ZIP writer, stored (no compression). Returns Uint8Array. */
+  var enc = { encode: utf8 };
+  var chunks = [], central = [], offset = 0;
+  function u16(v){ return [v & 0xFF, (v >>> 8) & 0xFF]; }
+  function u32(v){ return [v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 0xFF]; }
+  function push(arr){ var b = new Uint8Array(arr); chunks.push(b); offset += b.length; }
+  files.forEach(function(f){
+    var name = enc.encode(f.name);
+    var crc = crc32(f.data), size = f.data.length, localStart = offset;
+    push([].concat([0x50,0x4B,0x03,0x04], u16(20), u16(0x0800), u16(0), u16(0), u16(0),
+                   u32(crc), u32(size), u32(size), u16(name.length), u16(0)));
+    push(name); chunks.push(f.data); offset += size;
+    central.push({ name: name, crc: crc, size: size, start: localStart });
+  });
+  var centralStart = offset;
+  central.forEach(function(c){
+    push([].concat([0x50,0x4B,0x01,0x02], u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0),
+                   u32(c.crc), u32(c.size), u32(c.size), u16(c.name.length), u16(0), u16(0), u16(0), u16(0),
+                   u32(0), u32(c.start)));
+    push(c.name);
+  });
+  var centralSize = offset - centralStart;
+  push([].concat([0x50,0x4B,0x05,0x06], u16(0), u16(0), u16(central.length), u16(central.length),
+                 u32(centralSize), u32(centralStart), u16(0)));
+  var total = new Uint8Array(offset), pos = 0;
+  chunks.forEach(function(b){ total.set(b, pos); pos += b.length; });
+  return total;
+}
+function runXml(text, opts){
+  var p = S.profile;
+  var size = Math.round((opts.heading ? p.headingSize : p.bodySize) * 2);
+  var rPr = "<w:rPr><w:rFonts w:ascii=\"" + xmlEsc(p.font) + "\" w:hAnsi=\"" + xmlEsc(p.font) + "\"/>" +
+            (opts.bold || opts.heading ? "<w:b/>" : "") + "<w:sz w:val=\"" + size + "\"/></w:rPr>";
+  return "<w:r>" + rPr + "<w:t xml:space=\"preserve\">" + xmlEsc(text) + "</w:t></w:r>";
+}
+function paraXml(text, opts){
+  opts = opts || {};
+  var p = S.profile;
+  var line = Math.round(240 * (parseFloat(p.lineSpacing) || 1.5));
+  var pPr = "<w:pPr><w:spacing w:line=\"" + line + "\" w:lineRule=\"auto\" w:after=\"120\"/>" +
+            (opts.center ? "<w:jc w:val=\"center\"/>" : "<w:jc w:val=\"both\"/>") + "</w:pPr>";
+  if (opts.pageBreak) return "<w:p><w:r><w:br w:type=\"page\"/></w:r></w:p>";
+  return "<w:p>" + pPr + (text ? runXml(text, opts) : "") + "</w:p>";
+}
+function buildDocumentXml(){
+  var p = S.profile;
+  var title = S.parsed.title || "Assignment";
+  var body = "";
+  /* Cover page */
+  body += paraXml("", {});
+  body += paraXml("", {});
+  body += paraXml(title.toUpperCase(), { heading: true, center: true, bold: true });
+  body += paraXml("", {});
+  if (p.student) body += paraXml("Student Name: " + p.student, { center: true });
+  body += paraXml("Course: " + (p.course || ""), { center: true });
+  body += paraXml("Module: " + (S.parsed.subject || p.module || ""), { center: true });
+  if (p.teacher) body += paraXml("Teacher: " + p.teacher, { center: true });
+  if (S.parsed.deadline) body += paraXml("Deadline: " + S.parsed.deadline, { center: true });
+  body += paraXml(null, { pageBreak: true });
+  /* Sections */
+  fullText().forEach(function(sec){
+    body += paraXml(sec.heading, { heading: true, bold: true });
+    sec.text.split(/\n+/).map(function(x){ return x.trim(); }).filter(Boolean).forEach(function(par){
+      body += paraXml(par, {});
+    });
+  });
+  /* References */
+  var refs = $("refsText").value.split("\n").map(function(r){ return r.trim(); }).filter(Boolean);
+  if (refs.length){
+    body += paraXml("References", { heading: true, bold: true });
+    refs.forEach(function(r){ body += paraXml(r, {}); });
+  }
+  var mL = Math.round(p.marginL * 1440), mR = Math.round(p.marginR * 1440),
+      mT = Math.round(p.marginT * 1440), mB = Math.round(p.marginB * 1440);
+  var footerRef = (p.pageNum && p.pageNum !== "none")
+    ? "<w:footerReference w:type=\"default\" r:id=\"rIdFooter\"/>" : "";
+  var sect = "<w:sectPr>" + footerRef +
+    "<w:pgSz w:w=\"11906\" w:h=\"16838\"/>" +
+    "<w:pgMar w:top=\"" + mT + "\" w:right=\"" + mR + "\" w:bottom=\"" + mB + "\" w:left=\"" + mL + "\" w:header=\"720\" w:footer=\"720\" w:gutter=\"0\"/>" +
+    "</w:sectPr>";
+  return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+    "<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">" +
+    "<w:body>" + body + sect + "</w:body></w:document>";
+}
+function buildFooterXml(){
+  var align = S.profile.pageNum === "bottom-right" ? "right" : "center";
+  return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+    "<w:ftr xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">" +
+    "<w:p><w:pPr><w:jc w:val=\"" + align + "\"/></w:pPr>" +
+    "<w:r><w:fldChar w:fldCharType=\"begin\"/></w:r>" +
+    "<w:r><w:instrText xml:space=\"preserve\"> PAGE </w:instrText></w:r>" +
+    "<w:r><w:fldChar w:fldCharType=\"separate\"/></w:r>" +
+    "<w:r><w:t>1</w:t></w:r>" +
+    "<w:r><w:fldChar w:fldCharType=\"end\"/></w:r></w:p></w:ftr>";
+}
+function buildDocxBytes(){
+  var enc = { encode: utf8 };
+  var hasFooter = S.profile.pageNum && S.profile.pageNum !== "none";
+  var contentTypes = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+    "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">" +
+    "<Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>" +
+    "<Default Extension=\"xml\" ContentType=\"application/xml\"/>" +
+    "<Override PartName=\"/word/document.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml\"/>" +
+    (hasFooter ? "<Override PartName=\"/word/footer1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml\"/>" : "") +
+    "</Types>";
+  var rootRels = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+    "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">" +
+    "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"word/document.xml\"/></Relationships>";
+  var docRels = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+    "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">" +
+    (hasFooter ? "<Relationship Id=\"rIdFooter\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer\" Target=\"footer1.xml\"/>" : "") +
+    "</Relationships>";
+  var files = [
+    { name: "[Content_Types].xml", data: enc.encode(contentTypes) },
+    { name: "_rels/.rels", data: enc.encode(rootRels) },
+    { name: "word/document.xml", data: enc.encode(buildDocumentXml()) },
+    { name: "word/_rels/document.xml.rels", data: enc.encode(docRels) }
+  ];
+  if (hasFooter) files.push({ name: "word/footer1.xml", data: enc.encode(buildFooterXml()) });
+  return zipStore(files);
+}
+function docxBlob(){
+  var bytes = buildDocxBytes();
+  return new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+}
+function exportFileName(){
+  var base = (S.parsed.title || "Assignment").replace(/[^\w\- ]+/g, " ").replace(/\s+/g, " ").trim();
+  return (base || "Assignment") + ".docx";
+}
+function doExportDocx(){
+  if (!fullText().length){ showMsg("exportMsg", "Nothing to export yet. Generate the assignment in Step 3 first.", "err"); return null; }
+  var blob = docxBlob();
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url; a.download = exportFileName();
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 800);
+  showMsg("exportMsg", "Word file downloaded: " + exportFileName() + " (" + Math.round(blob.size / 1024) + " KB), formatted with your profile.", "ok");
+  return blob;
+}
+</script>
+
+<script>
+"use strict";
+/* ---------- Google: Identity Services, Drive, Classroom ---------- */
+var G_SCOPES = "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.coursework.me";
+var gTokenClient = null;
+function gShow(text, kind){ showMsg("gMsg", text, kind || "info"); }
+function gError(prefix, err){
+  var msg = (err && err.message) ? err.message : String(err);
+  gShow(prefix + ": " + msg, "err");
+  $("gStatus").textContent = "Google error. See the message below.";
+}
+function gApi(url, opts){
+  opts = opts || {};
+  opts.headers = opts.headers || {};
+  opts.headers["Authorization"] = "Bearer " + S.google.token;
+  return fetch(url, opts).then(function(res){
+    return res.json().catch(function(){ return {}; }).then(function(data){
+      if (!res.ok){
+        var msg = (data && data.error && data.error.message) ? data.error.message : ("HTTP " + res.status);
+        throw new Error(msg);
+      }
+      return data;
+    });
+  });
+}
+function connectGoogle(){
+  if (!S.settings.clientId){
+    gShow("No Google Client ID is set yet. Open Settings (top right), paste your OAuth Client ID, then press Connect Google again. The guide above these buttons explains how to create one for free.", "err");
+    openSettings();
+    return;
+  }
+  loadScriptOnce("https://accounts.google.com/gsi/client").then(function(){
+    if (!window.google || !google.accounts || !google.accounts.oauth2) throw new Error("Google Identity Services did not load");
+    gTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: S.settings.clientId,
+      scope: G_SCOPES,
+      callback: function(resp){
+        if (resp.error){ gShow("Google sign in failed: " + resp.error, "err"); return; }
+        S.google.token = resp.access_token;
+        $("gStatus").textContent = "Connected to Google.";
+        $("gCreateBtn").disabled = false;
+        $("gRefreshBtn").disabled = false;
+        gShow("Connected. You can create the Google Doc, then load your courses to attach it.", "ok");
+        loadCourses();
+      }
+    });
+    gTokenClient.requestAccessToken({ prompt: "consent" });
+  }).catch(function(err){ gError("Could not start Google sign in", err); });
+}
+function createGoogleDoc(){
+  if (!S.google.token){ gShow("Connect Google first.", "err"); return; }
+  if (!fullText().length){ gShow("Nothing to upload yet. Generate the assignment in Step 3 first.", "err"); return; }
+  var blob = docxBlob();
+  var name = exportFileName().replace(/\.docx$/i, "");
+  var boundary = "ag_boundary_" + Date.now();
+  var meta = JSON.stringify({ name: name, mimeType: "application/vnd.google-apps.document" });
+  var body = new Blob([
+    "--" + boundary + "\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n" + meta + "\r\n",
+    "--" + boundary + "\r\nContent-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document\r\n\r\n",
+    blob,
+    "\r\n--" + boundary + "--"
+  ], { type: "multipart/related; boundary=" + boundary });
+  $("gStatus").textContent = "Uploading to Google Drive and converting to a Google Doc.";
+  fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink", {
+    method: "POST",
+    headers: { "Authorization": "Bearer " + S.google.token },
+    body: body
+  }).then(function(res){
+    return res.json().then(function(data){
+      if (!res.ok) throw new Error((data.error && data.error.message) || ("HTTP " + res.status));
+      S.google.docId = data.id;
+      S.google.docUrl = data.webViewLink || ("https://docs.google.com/document/d/" + data.id + "/edit");
+      var link = $("gDocLink");
+      link.href = S.google.docUrl; link.classList.remove("hidden");
+      $("gStatus").textContent = "Google Doc created: " + (data.name || name);
+      gShow("Google Doc created. Now pick your course and coursework, then attach it to your submission.", "ok");
+      if ($("gCourseSel").value) $("gAttachBtn").disabled = false;
+    });
+  }).catch(function(err){ gError("Google Doc creation failed", err); });
+}
+function loadCourses(){
+  if (!S.google.token) return;
+  gApi("https://classroom.googleapis.com/v1/courses?courseStates=ACTIVE&studentId=me&pageSize=100").then(function(data){
+    var sel = $("gCourseSel");
+    sel.innerHTML = "";
+    var courses = data.courses || [];
+    if (!courses.length){ sel.innerHTML = '<option value="">No active courses found for this account</option>'; return; }
+    sel.innerHTML = '<option value="">Pick a course</option>';
+    courses.forEach(function(c){
+      var o = document.createElement("option");
+      o.value = c.id; o.textContent = c.name + (c.section ? " (" + c.section + ")" : "");
+      sel.appendChild(o);
+    });
+    gShow("Loaded " + courses.length + " courses. Pick yours to list its coursework.", "ok");
+  }).catch(function(err){ gError("Could not list courses", err); });
+}
+function loadCoursework(courseId){
+  var sel = $("gWorkSel");
+  sel.innerHTML = '<option value="">Loading coursework</option>';
+  gApi("https://classroom.googleapis.com/v1/courses/" + encodeURIComponent(courseId) + "/courseWork?pageSize=100").then(function(data){
+    var works = data.courseWork || [];
+    sel.innerHTML = "";
+    if (!works.length){ sel.innerHTML = '<option value="">No coursework found in this course</option>'; return; }
+    sel.innerHTML = '<option value="">Pick the coursework</option>';
+    works.forEach(function(w){
+      var o = document.createElement("option");
+      o.value = w.id; o.textContent = w.title || w.id;
+      sel.appendChild(o);
+    });
+  }).catch(function(err){ gError("Could not list coursework", err); sel.innerHTML = '<option value="">Could not load</option>'; });
+}
+function attachToClassroom(){
+  var courseId = $("gCourseSel").value, workId = $("gWorkSel").value;
+  if (!S.google.token){ gShow("Connect Google first.", "err"); return; }
+  if (!S.google.docId){ gShow("Create the Google Doc first, then attach it.", "err"); return; }
+  if (!courseId || !workId){ gShow("Pick your course and the coursework first.", "err"); return; }
+  var base = "https://classroom.googleapis.com/v1/courses/" + encodeURIComponent(courseId) + "/courseWork/" + encodeURIComponent(workId) + "/studentSubmissions";
+  gApi(base + "?userId=me").then(function(data){
+    var subs = data.studentSubmissions || [];
+    if (!subs.length) throw new Error("No student submission was found for your account on this coursework");
+    var subId = subs[0].id;
+    return gApi(base + "/" + encodeURIComponent(subId) + ":modifyAttachments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ addAttachments: [{ driveFile: { id: S.google.docId } }] })
+    });
+  }).then(function(){
+    gShow("Attached. The Google Doc is now on your Classroom submission. Open Classroom and press Turn in when you are ready.", "ok");
+    $("gStatus").textContent = "Doc attached to your submission.";
+  }).catch(function(err){ gError("Attach failed", err); });
+}
+
+/* ---------- Theme ---------- */
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme", t);
+  try { localStorage.setItem("ag.theme", t); } catch(e){}
+}
+
+/* ---------- Init ---------- */
+function init(){
+  S.settings = Object.assign({}, S.settings, loadLS(LS_SETTINGS, {}));
+  if ("apiKey" in S.settings){ delete S.settings.apiKey; saveLS(LS_SETTINGS, S.settings); } /* legacy Gemini key entry: removed, the Anthropic key lives under its own storage key */
+  try { S.anthropicKey = localStorage.getItem(LS_ANTHROPIC_KEY) || ""; } catch(e){ S.anthropicKey = ""; }
+  S.profile = Object.assign({}, DEFAULT_PROFILE, loadLS(LS_PROFILE, {}));
+  S.rubric = loadLS(LS_RUBRIC, DEFAULT_RUBRIC);
+  var theme = "light";
+  try { theme = localStorage.getItem("ag.theme") || "light"; } catch(e){}
+  applyTheme(theme);
+  fillSettingsUI();
+  refreshGenGate();
+
+  $("themeBtn").addEventListener("click", function(){
+    var cur = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    applyTheme(cur);
+  });
+  $("settingsBtn").addEventListener("click", openSettings);
+  $("closeSettingsBtn").addEventListener("click", closeSettings);
+  $("scrim").addEventListener("click", closeSettings);
+  $("saveSettingsBtn").addEventListener("click", function(){
+    persistAll(); refreshGenGate();
+    $("saveNote").textContent = "Saved.";
+    setStatus("Settings saved in this browser.");
+  });
+  ["setApiKey","setClientId","setModel","setModelCustom","rubricText"].forEach(function(id){
+    $(id).addEventListener("change", function(){ persistAll(); refreshGenGate(); });
+  });
+
+  document.querySelectorAll(".step-btn").forEach(function(b){
+    b.addEventListener("click", function(){ goStep(parseInt(b.getAttribute("data-step"), 10)); });
+  });
+  $("briefFile").addEventListener("change", function(){
+    if (this.files && this.files[0]) readBriefFile(this.files[0]);
+    this.value = "";
+  });
+  $("parseBtn").addEventListener("click", function(){
+    var text = $("briefText").value;
+    if (!text.trim()){ showMsg("briefError", "Paste your brief text or upload a brief file first.", "err"); return; }
+    showMsg("briefError", "");
+    S.parsed = parseBrief(text);
+    renderLearn();
+    goStep(2);
+    setStatus("Learned your brief: " + S.parsed.tasks.length + " task(s) detected" +
+      (S.parsed.words ? ", target " + S.parsed.words + " words" : "") +
+      (S.parsed.deadline ? ", deadline " + S.parsed.deadline : "") + ". Check Step 2 and edit anything.");
+  });
+  $("addTaskBtn").addEventListener("click", function(){
+    syncLearnFromUI();
+    S.parsed.tasks.push({ label: "Task " + (S.parsed.tasks.length + 1), text: "" });
+    renderLearn();
+  });
+  $("backToBrief").addEventListener("click", function(){ syncLearnFromUI(); goStep(1); });
+  $("toGenerateBtn").addEventListener("click", function(){
+    syncLearnFromUI();
+    if (!S.parsed.tasks.length || !S.parsed.tasks.some(function(t){ return t.text.trim(); })){
+      showMsg("learnError", "Add at least one task with text before generating.", "err"); return;
+    }
+    showMsg("learnError", "");
+    goStep(3);
+  });
+  $("genBtn").addEventListener("click", generateAll);
+  $("cancelBtn").addEventListener("click", function(){
+    S.cancelRequested = true;
+    if (S.abort) { try { S.abort.abort(); } catch(e){} }
+    setStatus("Cancelling after the current section.");
+  });
+  $("refsText").addEventListener("input", updateWordCount);
+  $("exportDocxBtn").addEventListener("click", function(){
+    persistAll();
+    showMsg("exportMsg", "");
+    doExportDocx();
+  });
+  $("gConnectBtn").addEventListener("click", function(){ persistAll(); connectGoogle(); });
+  $("gCreateBtn").addEventListener("click", createGoogleDoc);
+  $("gRefreshBtn").addEventListener("click", loadCourses);
+  $("gCourseSel").addEventListener("change", function(){
+    if (this.value) loadCoursework(this.value);
+    $("gAttachBtn").disabled = !(this.value && S.google.docId);
+  });
+  $("gWorkSel").addEventListener("change", function(){
+    $("gAttachBtn").disabled = !(this.value && S.google.docId && $("gCourseSel").value);
+  });
+  $("gAttachBtn").addEventListener("click", attachToClassroom);
+
+  if (S.settings.clientId) $("gGuide").classList.remove("show"), $("gGuide").classList.add("hidden");
+  setStatus("Ready. Paste your brief in Step 1 to begin.");
+}
+
+/* Test and integration hook */
+window.AssignmentGen = {
+  parseBrief: parseBrief, humanize: humanize, splitReferences: splitReferences,
+  buildDocxBytes: buildDocxBytes, countWords: countWords, state: S
+};
+
+try { init(); }
+catch (err) {
+  setStatus("Startup problem: " + (err && err.message ? err.message : err) + ". The page may still work; check Settings and try again.", true);
+  if (window.console) console.error(err);
+}
+</script>
+</body>
+</html>
