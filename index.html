@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Assignment Generator</title>
+<title>NMA College Digital Assignment Generator &amp; Humanizer</title>
 <style>
 /* Assignment Generator design system.
    Presentation only: tokens, layout polish, states, responsive rules. */
@@ -76,9 +76,10 @@ header.top{
   box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 14px rgba(59,91,219,.30);
 }
 .logo svg{width:22px;height:22px;stroke:#fff}
-h1.appname{font-size:21px;font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.2}
+h1.appname{font-size:20px;font-weight:700;margin:0;letter-spacing:-.01em;line-height:1.2}
 .tagline{margin:1px 0 0;color:var(--ink2);font-size:13px}
-.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.profile-line{margin:1px 0 0;color:var(--ink2);font-size:12.5px}
+.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .icon-btn{
   display:inline-flex;align-items:center;gap:7px;
   border:1px solid var(--line);background:var(--surface);color:var(--ink);
@@ -92,26 +93,35 @@ h1.appname{font-size:21px;font-weight:700;margin:0;letter-spacing:-.01em;line-he
 #statusLine .in{max-width:1060px;margin:0 auto;padding:7px 18px}
 #statusLine.err{color:var(--err)}
 
-/* Step indicator */
-nav.steps{display:flex;gap:9px;flex-wrap:wrap;margin:24px 0 20px}
-.step-btn{
-  flex:1 1 150px;display:flex;align-items:center;gap:11px;text-align:left;
-  border:1px solid var(--line);background:var(--surface);color:var(--ink);
-  border-radius:13px;padding:12px 14px;box-shadow:var(--shadow-sm);
-  transition:border-color .18s var(--ease),box-shadow .18s var(--ease),transform .18s var(--ease),background .18s var(--ease);
+/* Status cards */
+.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:20px 0 2px}
+.stat-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;box-shadow:var(--shadow-sm);
 }
-.step-btn:hover{border-color:var(--line-strong);transform:translateY(-1px)}
-.step-btn .num{
-  width:28px;height:28px;border-radius:50%;background:var(--surface2);color:var(--ink2);
-  display:grid;place-items:center;font-weight:700;font-size:13px;flex:0 0 auto;
+.stat-card .lab{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);margin-bottom:5px;line-height:1.4}
+.stat-card .val{font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+.stat-card .val.small{font-size:14.5px}
+.stat-card .sub{font-size:12.5px;color:var(--ink2);margin-top:3px;line-height:1.45}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:22px 0 20px;border-bottom:2px solid var(--line)}
+.tab-btn{
+  display:inline-flex;align-items:center;gap:9px;
+  border:1px solid transparent;border-bottom:3px solid transparent;
+  background:transparent;color:var(--ink2);
+  padding:11px 15px;font-weight:600;font-size:14.5px;
+  border-radius:12px 12px 0 0;margin-bottom:-2px;
+  transition:color .18s var(--ease),background .18s var(--ease),border-color .18s var(--ease);
+}
+.tab-btn .num{
+  width:24px;height:24px;border-radius:50%;background:var(--surface2);color:var(--ink2);
+  display:grid;place-items:center;font-size:12.5px;font-weight:700;flex:0 0 auto;
   transition:background .18s var(--ease),color .18s var(--ease);
 }
-.step-btn>span:last-child{font-weight:600;font-size:14.5px;line-height:1.3}
-.step-btn small{display:block;color:var(--ink2);font-size:12px;font-weight:400;margin-top:1px}
-.step-btn.active{border-color:var(--accent);box-shadow:var(--shadow);background:linear-gradient(180deg,var(--surface),var(--accent-soft))}
-.step-btn.active .num{background:var(--accent);color:#fff;box-shadow:0 0 0 4px var(--ring)}
-.step-btn.active small{color:var(--accent-ink)}
-.step-btn.done .num{background:var(--ok);color:#fff}
+.tab-btn:hover{color:var(--ink);background:var(--surface2)}
+.tab-btn[aria-selected="true"]{color:var(--accent-ink);background:var(--surface);border-color:var(--line);border-bottom:3px solid var(--accent)}
+.tab-btn[aria-selected="true"] .num{background:var(--accent);color:#fff}
 
 /* Cards and type */
 .card{
@@ -168,6 +178,7 @@ textarea.ta.tall{min-height:230px}
 .btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
 .btn.ghost:hover{background:var(--surface2);border-color:var(--line-strong);box-shadow:var(--shadow-sm)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.small{padding:8px 14px;font-size:14px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
 
 /* Messages */
@@ -177,6 +188,20 @@ textarea.ta.tall{min-height:230px}
 .msg.err{background:var(--err-bg);border-color:var(--err);color:var(--ink)}
 .msg.info{background:var(--surface2);border-color:var(--line-strong);color:var(--ink)}
 .msg a{font-weight:600}
+
+/* Detection chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--accent-soft);color:var(--accent-ink);
+  border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;
+}
+.chip.neutral{background:var(--surface2);color:var(--ink2)}
+.chip.okchip{background:var(--ok-bg);color:var(--ok)}
+
+/* Rules panel */
+.rules-list{margin:6px 0 0;padding-left:18px;line-height:1.7;font-size:14.5px}
+.rules-list ul{margin:2px 0 4px;padding-left:18px}
 
 /* Learn step: task cards */
 .task-item{
@@ -226,6 +251,37 @@ textarea.ta.tall{min-height:230px}
 }
 .wordbar b{color:var(--ink)}
 
+/* Voice card */
+.voice-list{margin:6px 0 0;padding-left:20px;line-height:1.65;font-size:14.5px}
+.voice-list li{margin-bottom:6px}
+
+/* Document preview (tab 3) */
+.doc-preview{
+  font-family:"Times New Roman",Times,serif;
+  background:var(--surface);border:1px solid var(--line-strong);border-radius:6px;
+  box-shadow:var(--shadow);color:var(--ink);
+  padding:56px 54px 56px 130px;line-height:1.5;min-height:420px;margin-top:14px;
+}
+.doc-preview:focus{outline:2px solid var(--accent);outline-offset:2px}
+.doc-preview p{font-size:12pt;text-align:justify;margin:0 0 10px}
+.doc-preview p.dp-cover{text-align:center}
+.doc-preview p.dp-title{font-size:14pt;font-weight:700;text-align:center;margin-bottom:16px}
+.doc-preview h3.dp-h{font-size:14pt;font-weight:700;text-align:left;margin:22px 0 8px;font-family:"Times New Roman",Times,serif}
+.doc-preview .dp-empty{color:var(--ink2);text-align:left}
+
+/* Checklist (tab 4) */
+.check-list{display:grid;gap:10px;margin-top:10px}
+.check-item{
+  display:flex;gap:10px;align-items:flex-start;
+  border:1px solid var(--line);border-radius:var(--r-md);
+  padding:11px 13px;background:var(--surface2);font-size:14.5px;cursor:pointer;
+}
+.check-item input{width:18px;height:18px;margin-top:2px;accent-color:var(--accent);flex:0 0 auto}
+
+/* Links area (tab 4) */
+.link-row{display:grid;grid-template-columns:210px 1fr auto;gap:10px;align-items:center;margin-top:10px}
+.link-row .lab{font-size:14px;font-weight:600}
+
 /* Settings drawer */
 .drawer{
   position:fixed;top:0;right:0;height:100dvh;width:min(430px,94vw);
@@ -255,17 +311,23 @@ a:hover{color:var(--accent-ink)}
 footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
 
 /* Responsive */
+@media(max-width:980px){
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+}
 @media(max-width:720px){
   .grid2,.grid3,.grid4{grid-template-columns:1fr}
   .card{padding:19px 16px}
   .wrap{padding:0 12px 52px}
-  nav.steps{gap:7px;margin:18px 0 16px}
-  .step-btn{flex:1 1 140px;padding:11px 12px}
+  .tabs{gap:4px;margin:18px 0 16px}
+  .tab-btn{padding:10px 11px;font-size:13.5px}
   .top-in{padding:11px 12px}
+  .doc-preview{padding:34px 20px 34px 34px}
+  .link-row{grid-template-columns:1fr}
 }
 @media(max-width:520px){
+  .stat-row{grid-template-columns:1fr}
   .tagline{display:none}
-  h1.appname{font-size:18px}
+  h1.appname{font-size:17px}
   .icon-btn{padding:8px 10px}
   .icon-btn span{display:none}
   .btn{padding:10px 14px}
@@ -283,145 +345,312 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
   <div class="top-in">
     <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
     <div>
-      <h1 class="appname">Assignment Generator</h1>
-      <p class="tagline">Paste a brief. It learns it, writes it in your school format, and exports to Word or Google Docs.</p>
+      <h1 class="appname">NMA College Digital Assignment Generator &amp; Humanizer</h1>
+      <p class="tagline">ATHE Level 4/5 Ready</p>
+      <p class="profile-line">Student Profile: Thit Sar · L-4 B-24 On Campus · Word Docs &amp; Google Classroom Sync</p>
     </div>
     <div class="top-actions">
+      <button class="btn small" id="quickExportBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+        Quick Export
+      </button>
       <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle dark or light theme"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg><span>Theme</span></button>
-      <button class="icon-btn" id="settingsBtn" type="button" aria-label="Open settings"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.51 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.23.6.86 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg><span>Settings</span></button>
+      <button class="icon-btn" id="settingsBtn" type="button" aria-label="Open settings"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0 1.87.34l-.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.51 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.23.6.86 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg><span>Settings</span></button>
     </div>
   </div>
   <div id="statusLine" role="status" aria-live="polite"><div class="in" id="statusText">Ready.</div></div>
 </header>
 
 <div class="wrap">
-  <nav class="steps" aria-label="Assignment steps">
-    <button class="step-btn active" type="button" data-step="1"><span class="num">1</span><span>Brief<small>Paste or upload the brief</small></span></button>
-    <button class="step-btn" type="button" data-step="2"><span class="num">2</span><span>Learn<small>Check what it found</small></span></button>
-    <button class="step-btn" type="button" data-step="3"><span class="num">3</span><span>Generate<small>Write and edit the draft</small></span></button>
-    <button class="step-btn" type="button" data-step="4"><span class="num">4</span><span>Export and Attach<small>Word, Google Doc, Classroom</small></span></button>
-  </nav>
+  <!-- Status cards: every value is computed live from the real document and brief -->
+  <div class="stat-row" role="group" aria-label="Assignment status">
+    <div class="stat-card">
+      <div class="lab">Word Count (Target: 2,000 to 3,500)</div>
+      <div class="val" id="wcValue">0 words</div>
+      <div class="sub" id="wcStatus">No document text yet</div>
+    </div>
+    <div class="stat-card">
+      <div class="lab">Turnitin AI Detection</div>
+      <div class="val small">Not checked yet</div>
+      <div class="sub">The official AI report comes from the NMA email pre-check in tab 4.</div>
+    </div>
+    <div class="stat-card">
+      <div class="lab">Plagiarism / Similarity</div>
+      <div class="val small">Not checked yet (max 20%)</div>
+      <div class="sub">Checked by the NMA email pre-check in tab 4, not inside this app.</div>
+    </div>
+    <div class="stat-card">
+      <div class="lab">APA Citations</div>
+      <div class="val" id="apaValue">0</div>
+      <div class="sub">citations in reference list</div>
+    </div>
+    <div class="stat-card">
+      <div class="lab">ATHE Grading Coverage</div>
+      <div class="val small" id="covValue">No brief yet</div>
+      <div class="sub" id="covSub">Load a sample or paste a brief in tab 1.</div>
+    </div>
+  </div>
 
-  <!-- STEP 1: BRIEF -->
-  <section class="card" id="panel-1" aria-labelledby="h-step1">
-    <h2 id="h-step1">Step 1 · Your assignment brief</h2>
-    <p class="hint">Paste the brief text, or upload a .txt or .docx brief file. Nothing leaves your device until you generate in Step 3.</p>
-    <label class="f" for="briefText">Brief text</label>
-    <textarea class="ta tall" id="briefText" placeholder="Paste the full assignment brief here: tasks, questions, word count, deadline, marking criteria."></textarea>
-    <div class="row">
-      <label class="btn secondary" for="briefFile" style="margin:0">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-        Upload .txt or .docx
-      </label>
-      <input class="hidden" type="file" id="briefFile" accept=".txt,.docx,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-      <span id="fileName" class="hint" style="margin:0"></span>
-      <button class="btn" id="parseBtn" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        Learn my assignment
-      </button>
-    </div>
-    <div class="msg err" id="briefError" role="alert"></div>
-  </section>
+  <div class="tabs" role="tablist" aria-label="Assignment generator sections">
+    <button class="tab-btn" type="button" role="tab" id="tab-1" data-step="1" aria-selected="true" aria-controls="panel-1"><span class="num">1</span><span>Assignment Brief &amp; Rules</span></button>
+    <button class="tab-btn" type="button" role="tab" id="tab-2" data-step="2" aria-selected="false" aria-controls="panel-2" tabindex="-1"><span class="num">2</span><span>AI Writer &amp; Humanizer</span></button>
+    <button class="tab-btn" type="button" role="tab" id="tab-3" data-step="3" aria-selected="false" aria-controls="panel-3" tabindex="-1"><span class="num">3</span><span>Word Doc Preview</span></button>
+    <button class="tab-btn" type="button" role="tab" id="tab-4" data-step="4" aria-selected="false" aria-controls="panel-4" tabindex="-1"><span class="num">4</span><span>Turnitin &amp; Classroom Sync</span></button>
+  </div>
 
-  <!-- STEP 2: LEARN -->
-  <section class="card hidden" id="panel-2" aria-labelledby="h-step2">
-    <h2 id="h-step2">Step 2 · What it learned</h2>
-    <p class="hint">This is the app reading of your brief. Fix anything before generating; the generator follows these fields.</p>
-    <div class="grid2">
-      <div><label class="f" for="fTitle">Assignment title</label><input class="in" id="fTitle" type="text"></div>
-      <div><label class="f" for="fSubject">Subject or module</label><input class="in" id="fSubject" type="text"></div>
-      <div><label class="f" for="fWords">Word count target (total)</label><input class="in" id="fWords" type="number" min="0" step="50" placeholder="e.g. 2500 (NMA band: 2000 to 3500)"></div>
-      <div><label class="f" for="fDeadline">Deadline (if found)</label><input class="in" id="fDeadline" type="text" placeholder="Not found in brief"></div>
-    </div>
-    <h3>Tasks and questions detected</h3>
-    <div id="tasksList"></div>
-    <button class="btn ghost" id="addTaskBtn" type="button">Add a task</button>
-    <label class="f" for="criteriaText">Marking criteria found in the brief</label>
-    <textarea class="ta" id="criteriaText" placeholder="No marking criteria detected. You can paste them here, or use the rubric in Settings."></textarea>
-    <div class="row">
-      <button class="btn secondary" id="backToBrief" type="button">Back to brief</button>
-      <button class="btn" id="toGenerateBtn" type="button">Looks right, go to generate</button>
-    </div>
-    <div class="msg err" id="learnError" role="alert"></div>
-  </section>
-
-  <!-- STEP 3: GENERATE -->
-  <section class="card hidden" id="panel-3" aria-labelledby="h-step3">
-    <h2 id="h-step3">Step 3 · Generate and edit</h2>
-    <p class="hint">The generator writes one section per task, follows your format profile and rubric from Settings, and cites only real, well known published sources in APA style.</p>
-    <div class="msg info show" id="genNoKey">
-      <b>No Anthropic API key yet.</b> Generation uses the Muse API from Anthropic, with your own key:
-      <ol style="margin:8px 0 4px 18px;padding:0">
-        <li>Open the <a href="https://console.anthropic.com/" target="_blank" rel="noopener">Claude Console</a> and sign in (or create an account).</li>
-        <li>Open <b>API Keys</b>, click <b>Create Key</b>, and copy the key.</li>
-        <li>Open <b>Settings</b> (top right), paste it into the Anthropic API key field, and come back here.</li>
-      </ol>
-      Note: the Muse API is a paid developer API. It is separate from a Claude subscription, and your Console account needs credit on it before generation will run.<br>
-      The key is stored only in this browser (localStorage). It is never sent anywhere except to Anthropic when you generate.
-    </div>
-    <div id="genControls" class="hidden">
+  <!-- TAB 1: BRIEF AND RULES -->
+  <section id="panel-1" role="tabpanel" aria-labelledby="tab-1">
+    <div class="card">
+      <h2>Upload or Paste Assignment Question</h2>
+      <p class="hint">Drop any NMA College / ATHE assignment brief below to automatically extract tasks, Merit and Distinction extensions, and required calculations. Nothing leaves your device until you generate in tab 2.</p>
       <div class="row" style="margin-top:2px">
-        <button class="btn" id="genBtn" type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
-          Generate assignment
-        </button>
-        <button class="btn ghost hidden" id="cancelBtn" type="button">Cancel</button>
-        <span class="hint" id="genMeta" style="margin:0"></span>
+        <button class="btn secondary" id="sampleFinBtn" type="button">Load Year 1 Financial Accounting</button>
+        <button class="btn ghost" id="samplePplBtn" type="button">Load People in Organizations</button>
+        <span class="hint" style="margin:0">Samples fill the brief and the details below. Edit anything.</span>
       </div>
-      <div id="genProgress" style="margin-top:14px"></div>
-      <div class="msg err" id="genError" role="alert"></div>
+      <label class="f" for="briefText">Assignment Scenario &amp; Tasks Brief</label>
+      <textarea class="ta tall" id="briefText" placeholder="Paste the full assignment brief here: tasks, questions, word count, deadline, marking criteria."></textarea>
+      <div class="row">
+        <label class="btn secondary" for="briefFile" style="margin:0">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+          Upload Brief (.txt/.md/.docx)
+        </label>
+        <input class="hidden" type="file" id="briefFile" accept=".txt,.md,.docx,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+        <span id="fileName" class="hint" style="margin:0"></span>
+      </div>
+      <div class="grid3">
+        <div><label class="f" for="mTitle">Document / File Title</label><input class="in" id="mTitle" type="text"></div>
+        <div><label class="f" for="mModule">Module Name &amp; Code</label><input class="in" id="mModule" type="text" placeholder="e.g. LV 4005 Financial and Management Accounting"></div>
+        <div><label class="f" for="mLecturer">Lecturer (Submitted To)</label><input class="in" id="mLecturer" type="text"></div>
+        <div><label class="f" for="mStudent">Student Name (Submitted By)</label><input class="in" id="mStudent" type="text"></div>
+        <div><label class="f" for="mBatch">Batch &amp; Mode</label><input class="in" id="mBatch" type="text"></div>
+        <div><label class="f" for="mSubDate">Submission Date</label><input class="in" id="mSubDate" type="text" placeholder="e.g. 30/10/2026"></div>
+      </div>
+      <div class="chips" id="detectChips"><span class="chip neutral">No brief analysed yet</span></div>
+      <div class="row">
+        <button class="btn" id="parseBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5Z"/></svg>
+          Learn Brief, Write &amp; Humanize Assignment
+        </button>
+      </div>
+      <div class="msg err" id="briefError" role="alert"></div>
+
+      <div id="learnWrap" class="hidden">
+        <hr class="divider">
+        <h3>What it learned: check and edit before writing</h3>
+        <p class="hint">The generator follows these fields. Fix anything here, or in the details above, before generating.</p>
+        <div class="grid2">
+          <div><label class="f" for="fWords">Word count target (total)</label><input class="in" id="fWords" type="number" min="0" step="50" placeholder="e.g. 2500 (NMA band: 2000 to 3500)"></div>
+        </div>
+        <h3>Tasks and questions detected</h3>
+        <div id="tasksList"></div>
+        <button class="btn ghost" id="addTaskBtn" type="button">Add a task</button>
+        <label class="f" for="criteriaText">Marking criteria found in the brief</label>
+        <textarea class="ta" id="criteriaText" placeholder="No marking criteria detected. You can paste them here, or use the rubric in Settings."></textarea>
+        <div class="row">
+          <button class="btn secondary" id="toGenerateBtn" type="button">Looks right, go to AI Writer</button>
+        </div>
+        <div class="msg err" id="learnError" role="alert"></div>
+      </div>
     </div>
-    <div id="editorWrap" class="hidden">
-      <div class="divider"></div>
-      <h3>Your assignment draft</h3>
-      <div class="wordbar"><span>Title: <b id="edTitleLabel"></b></span><span>Total words: <b id="totalWords">0</b></span><span>Target: <b id="targetWordsLabel">none set</b></span></div>
-      <div id="editorSections"></div>
-      <label class="f" for="refsText">Reference list (APA)</label>
-      <textarea class="ta" id="refsText" placeholder="References collected from the generated sections appear here. Edit freely before export."></textarea>
+
+    <div class="card">
+      <h2>NMA Format &amp; Scoring Rules</h2>
+      <p class="hint"><span class="chip okchip">Auto-Enforced</span></p>
+      <p class="hint">Extracted from the BBA Program Academic Writing class and the assignment instructions. Word exports follow your format profile in Settings, which is prefilled with exactly these values.</p>
+      <ul class="rules-list">
+        <li><b>Font Type &amp; Size:</b> Times New Roman (14pt headings / 12pt body)</li>
+        <li><b>Line &amp; Para Spacing:</b> 1.5 line, before 0pt, after 0pt</li>
+        <li><b>Page Margins:</b> Left 1.5in, Top / Right / Bottom 1.0in</li>
+        <li><b>Headings &amp; Page No:</b> Left aligned headings, page numbers bottom center</li>
+        <li><b>Required Word Count:</b> 2,000 to 3,500 words</li>
+        <li><b>Turnitin Thresholds:</b> Similarity at or under 20%, AI report required (from the tab 4 email pre-check)</li>
+        <li><b>APA Referencing Rules (NMA):</b>
+          <ul>
+            <li>Text Books: Author (Year), Name of textbook, Edition, Publisher.</li>
+            <li>Journal: Author (Year), Title of paper, Name of Journal, Vol ( ) No ( ), Page No.</li>
+            <li>Website: http... (Retrieved date).</li>
+          </ul>
+        </li>
+      </ul>
+      <div class="row">
+        <button class="btn ghost" id="rulesSettingsBtn" type="button">Edit format profile and rubric in Settings</button>
+      </div>
+    </div>
+  </section>
+  <!-- TAB 2: AI WRITER AND HUMANIZER -->
+  <section id="panel-2" role="tabpanel" aria-labelledby="tab-2" class="hidden">
+    <div class="card">
+      <h2>AI Writer</h2>
+      <p class="hint">The writer produces one section per task, follows your format profile and rubric from Settings, runs the humanizer pass on every section, and cites only real, well known published sources in APA style.</p>
+      <div class="msg info show" id="genNoKey">
+        <b>No Anthropic API key yet.</b> Generation uses the Muse API from Anthropic, with your own key:
+        <ol style="margin:8px 0 4px 18px;padding:0">
+          <li>Open the <a href="https://console.anthropic.com/" target="_blank" rel="noopener">Claude Console</a> and sign in (or create an account).</li>
+          <li>Open <b>API Keys</b>, click <b>Create Key</b>, and copy the key.</li>
+          <li>Open <b>Settings</b> (top right), paste it into the Anthropic API key field, and come back here.</li>
+        </ol>
+        Note: the Muse API is a paid developer API. It is separate from a Claude subscription, and your Console account needs credit on it before generation will run.<br>
+        The key is stored only in this browser (localStorage). It is never sent anywhere except to Anthropic when you generate.
+      </div>
+      <div id="genControls" class="hidden">
+        <div class="row" style="margin-top:2px">
+          <button class="btn" id="genBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+            Generate assignment
+          </button>
+          <button class="btn ghost hidden" id="cancelBtn" type="button">Cancel</button>
+          <span class="hint" id="genMeta" style="margin:0"></span>
+        </div>
+        <div id="genProgress" style="margin-top:14px"></div>
+        <div class="msg err" id="genError" role="alert"></div>
+      </div>
+      <div id="editorWrap" class="hidden">
+        <hr class="divider">
+        <h3>Your assignment draft</h3>
+        <div class="wordbar"><span>Title: <b id="edTitleLabel"></b></span><span>Total words: <b id="totalWords">0</b></span><span>Target: <b id="targetWordsLabel">none set</b></span></div>
+        <div id="editorSections"></div>
+        <label class="f" for="refsText">Reference list (APA)</label>
+        <textarea class="ta" id="refsText" placeholder="References collected from the generated sections appear here. Edit freely before export."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Turnitin Humanizer &amp; Section Editor</h2>
+      <p class="hint">Modeled on a natural student voice profile. Paste any draft paragraph below and run the pass. It strips AI cliché vocabulary and evens out the sentence rhythm locally, in your browser. Numbers, in-text citations and the reference list are never touched, and no em dashes survive the pass. Only the official NMA email pre-check in tab 4 can give a real Turnitin result.</p>
+      <label class="f" for="humIn">Paste Any Draft / AI Paragraph to Humanize</label>
+      <textarea class="ta" id="humIn" placeholder="Paste a paragraph here, for example: Moreover, it is imperative to delve into the multifaceted tapestry of working capital management."></textarea>
+      <div class="row">
+        <button class="btn" id="humBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg>
+          Apply Thit Sar Humanizer Pass
+        </button>
+      </div>
+      <label class="f" for="humOut">Humanized NMA Output</label>
+      <textarea class="ta" id="humOut" readonly placeholder="The humanized paragraph appears here."></textarea>
+      <p class="hint" id="humStats" style="margin-top:8px">Banned AI words removed: 0 phrases replaced · Sentence burstiness: not measured yet</p>
+      <div class="row">
+        <button class="btn secondary" id="humAppendBtn" type="button">+ Append Paragraph to Assignment Document</button>
+      </div>
+      <div class="msg" id="humMsg" role="status"></div>
+      <hr class="divider">
+      <h3>Thit Sar Voice Card, Rules Applied</h3>
+      <ol class="voice-list">
+        <li><b>Zero AI Cliché Vocabulary.</b> Automatically strips words commonly flagged as AI clichés: delve, tapestry, underscore, testament, pivotal, holistic, paradigm, spearhead, utilize.</li>
+        <li><b>Natural Sentence Rhythm.</b> Mixes concise declarative sentences with detailed analytical explanations and practical business examples (for example the cases and figures in your brief).</li>
+        <li><b>Grounded Lecture Integration.</b> Keeps the brief's own formulas and worked figures in view (payback, contribution, the three-column cash book, the imprest petty cash system) instead of generic filler.</li>
+      </ol>
     </div>
   </section>
 
-  <!-- STEP 4: EXPORT -->
-  <section class="card hidden" id="panel-4" aria-labelledby="h-step4">
-    <h2 id="h-step4">Step 4 · Export and attach</h2>
-    <p class="hint">Word export applies your format profile: cover page first, then the sections, page numbers at the bottom center.</p>
-    <div class="row" style="margin-top:2px">
-      <button class="btn" id="exportDocxBtn" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-        Download Word (.docx)
-      </button>
-      <span class="hint" id="exportMeta" style="margin:0"></span>
+  <!-- TAB 3: WORD DOC PREVIEW -->
+  <section id="panel-3" role="tabpanel" aria-labelledby="tab-3" class="hidden">
+    <div class="card">
+      <h2>Exact NMA College Formatted Document Preview (Editable)</h2>
+      <p class="hint">Times New Roman · 14pt left-aligned headings · 12pt body · 1.5 line spacing · 1.5in left margin · APA references. Click into the document and type to edit; edits stay in sync with the Word export.</p>
+      <div class="row" style="margin-top:2px">
+        <button class="btn secondary" id="copyTextBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Full Assignment Text
+        </button>
+        <button class="btn" id="previewDlBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          Download Word (.docx)
+        </button>
+      </div>
+      <div class="msg" id="previewMsg" role="status"></div>
+      <div class="doc-preview" id="previewDoc" aria-label="Formatted document preview"></div>
     </div>
-    <div class="msg" id="exportMsg" role="status"></div>
-    <div class="divider"></div>
-    <h3>Google Docs and Classroom</h3>
-    <div class="msg info show" id="gGuide">
-      <b>One time Google setup.</b> The Google buttons need your own free OAuth Client ID:
-      <ol style="margin:8px 0 4px 18px;padding:0">
-        <li>Open the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console credentials page</a>, create a project if asked.</li>
-        <li>Enable the <b>Google Drive API</b> and <b>Google Classroom API</b> for that project.</li>
-        <li>Create an <b>OAuth client ID</b> of type <b>Web application</b>. Under Authorized JavaScript origins, add the address this page is opened from (for a local file it is shown as <span class="kbd-note">null</span> origin, so host the page on any static site, for example GitHub Pages, and add that origin).</li>
-        <li>Copy the Client ID into <b>Settings</b>, then use Connect Google below.</li>
-      </ol>
+  </section>
+  <!-- TAB 4: TURNITIN AND CLASSROOM SYNC -->
+  <section id="panel-4" role="tabpanel" aria-labelledby="tab-4" class="hidden">
+    <div class="card">
+      <h2>Step 1: NMA Turnitin Pre-Check Email</h2>
+      <p class="hint">Required before Classroom turn-in. Email your Word file first to receive your official Turnitin Similarity PDF (at or under 20%) and AI Report PDF. Attach the downloaded .docx file to the email yourself; this app prepares the text and opens Gmail for you.</p>
+      <label class="f" for="emailTo">To</label>
+      <input class="in" id="emailTo" type="text" readonly value="nmauniversity.assignmentcheck@gmail.com">
+      <label class="f" for="emailSubject">Subject</label>
+      <input class="in" id="emailSubject" type="text">
+      <label class="f" for="emailBody">Email body</label>
+      <textarea class="ta" id="emailBody" style="min-height:250px"></textarea>
+      <div class="row">
+        <button class="btn secondary" id="copyEmailBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Email Text
+        </button>
+        <button class="btn" id="gmailBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>
+          Open Gmail Compose to NMA Assignment Check
+        </button>
+      </div>
+      <div class="msg" id="emailMsg" role="status"></div>
     </div>
-    <div class="row">
-      <button class="btn secondary" id="gConnectBtn" type="button">Connect Google</button>
-      <span class="hint" id="gStatus" style="margin:0" role="status">Not connected.</span>
+
+    <div class="card">
+      <h2>Step 2: Attach to Google Classroom &amp; Turn In</h2>
+      <p class="hint">Due: <b id="dueLine">not set</b>. From the NMA Classroom guidance on submitting assignment files, verify all required files before clicking Turn in inside Classroom.</p>
+      <div class="row" style="margin-top:2px">
+        <button class="btn" id="exportDocxBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          Download Word (.docx)
+        </button>
+        <span class="hint" id="exportMeta" style="margin:0"></span>
+      </div>
+      <div class="msg" id="exportMsg" role="status"></div>
+      <h3>Turn-in checklist</h3>
+      <div class="check-list">
+        <label class="check-item"><input type="checkbox" id="chkFile"><span>Assignment Word file (2,000 to 3,500 words, NMA format)</span></label>
+        <label class="check-item"><input type="checkbox" id="chkSlides"><span>Presentation slides (Task 1) with speaker notes</span></label>
+        <label class="check-item"><input type="checkbox" id="chkSim"><span>Turnitin Similarity Report PDF (at or under 20%)</span></label>
+        <label class="check-item"><input type="checkbox" id="chkAi"><span>Turnitin AI Report PDF</span></label>
+      </div>
+      <hr class="divider">
+      <h3>Google Docs and Classroom attach</h3>
+      <div class="msg info show" id="gGuide">
+        <b>One time Google setup.</b> The Google buttons need your own free OAuth Client ID:
+        <ol style="margin:8px 0 4px 18px;padding:0">
+          <li>Open the <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console credentials page</a>, create a project if asked.</li>
+          <li>Enable the <b>Google Drive API</b> and <b>Google Classroom API</b> for that project.</li>
+          <li>Create an <b>OAuth client ID</b> of type <b>Web application</b>. Under Authorized JavaScript origins, add the address this page is opened from (for a local file it is shown as <span class="kbd-note">null</span> origin, so host the page on any static site, for example GitHub Pages, and add that origin).</li>
+          <li>Copy the Client ID into <b>Settings</b>, then use Connect Google below.</li>
+        </ol>
+      </div>
+      <div class="row">
+        <button class="btn secondary" id="gConnectBtn" type="button">Connect Google</button>
+        <span class="hint" id="gStatus" style="margin:0" role="status">Not connected.</span>
+      </div>
+      <div class="row">
+        <button class="btn" id="gCreateBtn" type="button" disabled>Create Google Doc</button>
+        <a id="gDocLink" href="#" target="_blank" rel="noopener" class="hidden">Open the created Google Doc</a>
+      </div>
+      <div class="grid2">
+        <div><label class="f" for="gCourseSel">Your Classroom course</label><select class="in" id="gCourseSel"><option value="">Connect Google first</option></select></div>
+        <div><label class="f" for="gWorkSel">Coursework</label><select class="in" id="gWorkSel"><option value="">Pick a course first</option></select></div>
+      </div>
+      <div class="row">
+        <button class="btn secondary" id="gRefreshBtn" type="button" disabled>Load my courses</button>
+        <button class="btn" id="gAttachBtn" type="button" disabled>Attach Doc to my submission</button>
+      </div>
+      <div class="msg" id="gMsg" role="status"></div>
+      <p class="hint">Attach adds the created Google Doc to your own student submission for the chosen coursework. It does not turn the work in; you still press Turn in inside Classroom yourself.</p>
+      <hr class="divider">
+      <h3>Direct NMA Google Classroom Links</h3>
+      <div class="link-row">
+        <span class="lab">Financial Accounting Classroom</span>
+        <input class="in link-in" id="linkFin" type="text">
+        <a class="btn ghost small" id="linkFinOpen" href="#" target="_blank" rel="noopener">Open</a>
+      </div>
+      <div class="link-row">
+        <span class="lab">Academic Writing Classroom</span>
+        <input class="in link-in" id="linkAW" type="text">
+        <a class="btn ghost small" id="linkAWOpen" href="#" target="_blank" rel="noopener">Open</a>
+      </div>
+      <div class="link-row">
+        <span class="lab">Delivered Google Doc</span>
+        <input class="in link-in" id="linkDoc" type="text">
+        <a class="btn ghost small" id="linkDocOpen" href="#" target="_blank" rel="noopener">Open</a>
+      </div>
     </div>
-    <div class="row">
-      <button class="btn" id="gCreateBtn" type="button" disabled>Create Google Doc</button>
-      <a id="gDocLink" href="#" target="_blank" rel="noopener" class="hidden">Open the created Google Doc</a>
-    </div>
-    <div class="grid2">
-      <div><label class="f" for="gCourseSel">Your Classroom course</label><select class="in" id="gCourseSel"><option value="">Connect Google first</option></select></div>
-      <div><label class="f" for="gWorkSel">Coursework</label><select class="in" id="gWorkSel"><option value="">Pick a course first</option></select></div>
-    </div>
-    <div class="row">
-      <button class="btn secondary" id="gRefreshBtn" type="button" disabled>Load my courses</button>
-      <button class="btn" id="gAttachBtn" type="button" disabled>Attach Doc to my submission</button>
-    </div>
-    <div class="msg" id="gMsg" role="status"></div>
-    <p class="hint">Attach adds the created Google Doc to your own student submission for the chosen coursework. It does not turn the work in; you still press Turn in inside Classroom yourself.</p>
   </section>
 
   <footer class="foot">Assignment Generator runs fully in your browser. Your brief, keys and drafts stay on this device.</footer>
@@ -470,7 +699,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
     <div><label class="f" for="pfMB">Margin bottom (in)</label><input class="in" id="pfMB" type="number" min="0.3" max="3" step="0.1"></div>
   </div>
   <h3>Cover page</h3>
-  <p class="hint">School cover page pattern: a bold module line, a two column Submitted to and Submitted by block, a centered cohort line such as L-4 B-24 On Campus, and a centered Date of Submitted line. A brief's own instructions always override this sample format.</p>
+  <p class="hint">School cover page pattern: a bold module line, a two column Submitted to and Submitted by block, a centered cohort line such as L-4 B-24 On Campus, and a centered Date of Submitted line. A brief's own instructions always override this sample format. The tab 1 detail fields feed the same cover values.</p>
   <div class="grid2">
     <div><label class="f" for="pfStudent">Student name</label><input class="in" id="pfStudent" type="text" placeholder="Your full name"></div>
     <div><label class="f" for="pfCourse">Course</label><input class="in" id="pfCourse" type="text" placeholder="e.g. BBA Program"></div>
@@ -495,6 +724,9 @@ var LS_SETTINGS = "ag.settings.v1";
 var LS_ANTHROPIC_KEY = "asngen:anthropicKey";
 var LS_PROFILE  = "ag.profile.v1";
 var LS_RUBRIC   = "ag.rubric.v1";
+var LS_META     = "ag.meta.v1";
+var LS_CHECK    = "ag.checklist.v1";
+var LS_LINKS    = "ag.links.v1";
 
 var DEFAULT_PROFILE = {
   font: "Times New Roman", headingSize: 14, bodySize: 12, lineSpacing: 1.5,
@@ -507,12 +739,28 @@ var DEFAULT_RUBRIC = [
   "Marked out of 100 points. ATHE grading: Pass criteria cover the learning outcomes (LO1 to LO4); Merit criteria (M1 to M3) need analysis and evaluation with specific business examples; Distinction criteria (D1 to D3) need justified recommendations and evaluation of benefits and limits. Write to Distinction standard. Similarity index must stay under 20 percent. Work is not accepted after the due date."
 ].join("\n");
 
+var DEFAULT_META = {
+  title: "Thitsar Financial Accounting", module: "", lecturer: "",
+  student: "Thit Sar", batch: "L-4 B-24 On Campus", date: ""
+};
+
+var DEFAULT_LINKS = {
+  fin: "https://classroom.google.com/c/ODc0NTM4MzQzNDE1",
+  aw: "https://classroom.google.com/c/NzM0NzAzNTA4MDUy",
+  doc: "https://docs.google.com/document/d/1Kwxx0facxt8ZA5lcBJLG0Zu_AwrBGEAuD35kzMk3a9o/edit"
+};
+
 var S = {
   settings: { clientId: "", model: "claude-sonnet-4-5", modelCustom: "" },
   anthropicKey: "",
   profile: JSON.parse(JSON.stringify(DEFAULT_PROFILE)),
   rubric: DEFAULT_RUBRIC,
-  parsed: { title: "", subject: "", words: 0, deadline: "", tasks: [], criteria: "" },
+  parsed: { title: "", subject: "", words: 0, deadline: "", tasks: [], criteria: "", merit: 0, distinction: 0 },
+  parsedLoaded: false,
+  meta: JSON.parse(JSON.stringify(DEFAULT_META)),
+  checklist: { file: false, slides: false, sim: false, ai: false },
+  links: JSON.parse(JSON.stringify(DEFAULT_LINKS)),
+  emailDirty: false,
   sections: [],            /* {heading, task, text, status, error} */
   generating: false,
   cancelRequested: false,
@@ -545,26 +793,82 @@ function countWords(text){
 }
 
 /* ---------- Humanizer post-processing ----------
-   Hard rule: no em dash characters ever reach the output. */
-function humanize(text){
+   Hard rules: no em dash characters ever reach the output, and the banned
+   AI cliché vocabulary is replaced. Numbers, citations and reference
+   entries are never altered: replacements only touch the listed words. */
+function capLike(match, rep){
+  if (match && match.charAt(0) >= "A" && match.charAt(0) <= "Z") return rep.charAt(0).toUpperCase() + rep.slice(1);
+  return rep;
+}
+var BANNED_RULES = [
+  { re: /\bdelve into\b/gi, rep: function(m){ return capLike(m, "look into"); } },
+  { re: /\bdelving\b/gi, rep: function(m){ return capLike(m, "examining"); } },
+  { re: /\bdelve(s|d)?\b/gi, rep: function(m, s){ return capLike(m, s === "s" ? "examines" : (s === "d" ? "examined" : "examine")); } },
+  { re: /\btapestries\b/gi, rep: function(m){ return capLike(m, "patterns"); } },
+  { re: /\btapestry\b/gi, rep: function(m){ return capLike(m, "mix"); } },
+  { re: /\bunderscor(e|es|ed|ing)\b/gi, rep: function(m, s){ return capLike(m, s === "es" ? "shows" : (s === "ed" ? "showed" : (s === "ing" ? "showing" : "show"))); } },
+  { re: /\btestament\b/gi, rep: function(m){ return capLike(m, "sign"); } },
+  { re: /\bpivotal\b/gi, rep: function(m){ return capLike(m, "key"); } },
+  { re: /\bholistic\b/gi, rep: function(m){ return capLike(m, "overall"); } },
+  { re: /\bparadigms\b/gi, rep: function(m){ return capLike(m, "models"); } },
+  { re: /\bparadigm\b/gi, rep: function(m){ return capLike(m, "model"); } },
+  { re: /\bspearheading\b/gi, rep: function(m){ return capLike(m, "leading"); } },
+  { re: /\bspearheaded\b/gi, rep: function(m){ return capLike(m, "led"); } },
+  { re: /\bspearheads\b/gi, rep: function(m){ return capLike(m, "leads"); } },
+  { re: /\bspearhead\b/gi, rep: function(m){ return capLike(m, "lead"); } },
+  { re: /\butiliz(e|es|ed|ing)\b/gi, rep: function(m, s){ return capLike(m, s === "es" ? "uses" : (s === "ed" ? "used" : (s === "ing" ? "using" : "use"))); } },
+  { re: /\butilis(e|es|ed|ing)\b/gi, rep: function(m, s){ return capLike(m, s === "es" ? "uses" : (s === "ed" ? "used" : (s === "ing" ? "using" : "use"))); } }
+];
+function humanizeCore(text){
   var t = String(text || "");
+  var replaced = 0;
   t = t.replace(/\u2014/g, ", ");          /* em dash to comma */
   t = t.replace(/\s--\s/g, ", ");          /* typed double dash */
+  BANNED_RULES.forEach(function(rule){
+    t = t.replace(rule.re, function(){ replaced++; return rule.rep.apply(null, arguments); });
+  });
   t = t.replace(/\*\*(.+?)\*\*/g, "$1");   /* strip bold markers */
   t = t.replace(/__(.+?)__/g, "$1");
   t = t.replace(/^#{1,6}\s+/gm, "");       /* strip markdown heading marks */
-  t = t.replace(/^\s*[-*]\s+/gm, function(m){ return m; });
   t = t.replace(/,\s*,/g, ",");
   t = t.replace(/[ \t]{2,}/g, " ");
   t = t.replace(/\n{3,}/g, "\n\n");
-  return t.trim();
+  return { text: t.trim(), replaced: replaced };
+}
+function humanize(text){
+  return humanizeCore(text).text;
+}
+function burstinessLabel(text){
+  /* Local indicator only: spread of sentence lengths. Not a Turnitin score. */
+  var sentences = String(text || "").split(/[.!?]+/).map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
+  if (sentences.length < 2) return "Low (too little text to judge)";
+  var lens = sentences.map(function(s){ return countWords(s); });
+  var mean = 0; lens.forEach(function(n){ mean += n; }); mean = mean / lens.length;
+  if (!mean) return "Low";
+  var varSum = 0; lens.forEach(function(n){ varSum += (n - mean) * (n - mean); });
+  var cv = Math.sqrt(varSum / lens.length) / mean;
+  if (cv >= 0.5) return "High (human pattern)";
+  if (cv >= 0.28) return "Medium";
+  return "Low";
+}
+function humanizePass(text){
+  var core = humanizeCore(text);
+  return { text: core.text, replaced: core.replaced, burstiness: burstinessLabel(core.text) };
 }
 
 /* ---------- Brief parsing (deterministic heuristics) ---------- */
+function scanExt(str){
+  var m = 0, d = 0;
+  String(str || "").split("\n").forEach(function(line){
+    var mm = line.match(/^\s*(?:[-*\u2022]\s*)?(merit|distinction)\b/i);
+    if (mm){ if (mm[1].toLowerCase() === "merit") m++; else d++; }
+  });
+  return { merit: m, distinction: d };
+}
 function parseBrief(raw){
   var text = String(raw || "").replace(/\r\n/g, "\n");
   var lines = text.split("\n");
-  var out = { title: "", subject: "", words: 0, deadline: "", tasks: [], criteria: "" };
+  var out = { title: "", subject: "", words: 0, deadline: "", tasks: [], criteria: "", merit: 0, distinction: 0 };
 
   /* Title: first short non-empty line */
   for (var i = 0; i < lines.length; i++){
@@ -630,22 +934,27 @@ function parseBrief(raw){
     else if (text.trim()) tasks = [{ label: "Task 1", text: text.trim() }];
   }
   out.tasks = tasks.slice(0, 12);
+
+  var ext = scanExt(text);
+  out.merit = ext.merit;
+  out.distinction = ext.distinction;
   return out;
 }
 
-/* ---------- Wizard ---------- */
+/* ---------- Tabs ---------- */
 function goStep(n){
   S.step = n;
   for (var i = 1; i <= 4; i++){
     var p = $("panel-" + i); if (p) p.classList.toggle("hidden", i !== n);
+    var t = $("tab-" + i);
+    if (t){ t.setAttribute("aria-selected", i === n ? "true" : "false"); t.tabIndex = (i === n) ? 0 : -1; }
   }
-  var btns = document.querySelectorAll(".step-btn");
-  btns.forEach(function(b){
-    var s = parseInt(b.getAttribute("data-step"), 10);
-    b.classList.toggle("active", s === n);
-    b.classList.toggle("done", s < n);
-  });
-  if (n === 3) refreshGenGate();
+  if (n === 2){ refreshGenGate(); if (!S.generating && typeof renderEditor === "function") renderEditor(); }
+  if (n === 3) renderPreview();
+  if (n === 4){
+    buildEmail(false);
+    var dl = $("dueLine"); if (dl) dl.textContent = S.meta.date || S.parsed.deadline || "not set";
+  }
   try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch(e){ try { window.scrollTo(0, 0); } catch(e2){} }
 }
 
@@ -665,11 +974,17 @@ function collectSettingsFromUI(){
   S.profile.marginR = parseFloat($("pfMR").value) || 1;
   S.profile.marginT = parseFloat($("pfMT").value) || 1;
   S.profile.marginB = parseFloat($("pfMB").value) || 1;
-  S.profile.student = $("pfStudent").value;
+  S.profile.student = $("pfStudent").value || S.meta.student || "";
   S.profile.course = $("pfCourse").value;
-  S.profile.module = $("pfModule").value;
-  S.profile.teacher = $("pfTeacher").value;
+  S.profile.module = $("pfModule").value || S.meta.module || "";
+  S.profile.teacher = $("pfTeacher").value || S.meta.lecturer || "";
   S.rubric = $("rubricText").value;
+  /* Keep the tab 1 detail fields in step with the cover fields. Empty
+     drawer fields never erase values already loaded in tab 1. */
+  if (S.profile.student) S.meta.student = S.profile.student;
+  if (S.profile.teacher) S.meta.lecturer = S.profile.teacher;
+  if (S.profile.module) S.meta.module = S.profile.module;
+  if ($("mTitle")) fillMetaUI();
 }
 function fillSettingsUI(){
   $("setApiKey").value = S.anthropicKey || "";
@@ -687,10 +1002,10 @@ function fillSettingsUI(){
   $("pfMR").value = S.profile.marginR;
   $("pfMT").value = S.profile.marginT;
   $("pfMB").value = S.profile.marginB;
-  $("pfStudent").value = S.profile.student || "";
+  $("pfStudent").value = S.meta.student || S.profile.student || "";
   $("pfCourse").value = S.profile.course || "";
-  $("pfModule").value = S.profile.module || "";
-  $("pfTeacher").value = S.profile.teacher || "";
+  $("pfModule").value = S.meta.module || S.profile.module || "";
+  $("pfTeacher").value = S.meta.lecturer || S.profile.teacher || "";
   $("rubricText").value = S.rubric || "";
 }
 function persistAll(){
@@ -699,10 +1014,89 @@ function persistAll(){
   saveLS(LS_SETTINGS, S.settings);
   saveLS(LS_PROFILE, S.profile);
   saveLS(LS_RUBRIC, S.rubric);
+  saveLS(LS_META, S.meta);
 }
 function openSettings(){ fillSettingsUI(); $("settingsDrawer").classList.add("open"); $("scrim").classList.add("show"); }
 function closeSettings(){ persistAll(); $("settingsDrawer").classList.remove("open"); $("scrim").classList.remove("show"); refreshGenGate(); }
 
+/* ---------- Assignment detail fields (tab 1 metadata) ---------- */
+function fillMetaUI(){
+  if (!$("mTitle")) return;
+  $("mTitle").value = S.meta.title || "";
+  $("mModule").value = S.meta.module || "";
+  $("mLecturer").value = S.meta.lecturer || "";
+  $("mStudent").value = S.meta.student || "";
+  $("mBatch").value = S.meta.batch || "";
+  $("mSubDate").value = S.meta.date || "";
+}
+function readMetaUI(){
+  if (!$("mTitle")) return;
+  S.meta.title = $("mTitle").value.trim();
+  S.meta.module = $("mModule").value.trim();
+  S.meta.lecturer = $("mLecturer").value.trim();
+  S.meta.student = $("mStudent").value.trim();
+  S.meta.batch = $("mBatch").value.trim();
+  S.meta.date = $("mSubDate").value.trim();
+  applyMetaToState();
+}
+function applyMetaToState(){
+  if (S.meta.title) S.parsed.title = S.meta.title;
+  if (S.meta.module){ S.parsed.subject = S.meta.module; S.profile.module = S.meta.module; }
+  if (S.meta.date) S.parsed.deadline = S.meta.date;
+  S.profile.student = S.meta.student;
+  S.profile.teacher = S.meta.lecturer;
+}
+function persistMeta(){
+  readMetaUI();
+  saveLS(LS_META, S.meta);
+  S.emailDirty = false;
+  buildEmail(false);
+}
+
+/* ---------- Status cards and detection chips (all values computed live) ---------- */
+function documentWordTotal(){
+  var total = 0;
+  S.sections.forEach(function(s){ if (s.status === "done") total += countWords(s.text); });
+  var rt = $("refsText"); if (rt) total += countWords(rt.value);
+  return total;
+}
+function citationCount(){
+  var rt = $("refsText"); if (!rt) return 0;
+  return rt.value.split("\n").map(function(r){ return r.trim(); }).filter(Boolean).length;
+}
+function updateStatusCards(){
+  var wc = $("wcValue"), ws = $("wcStatus");
+  if (wc && ws){
+    var n = documentWordTotal();
+    wc.textContent = n + (n === 1 ? " word" : " words");
+    if (!n) ws.textContent = "No document text yet";
+    else if (n >= 2000 && n <= 3500) ws.textContent = "Within NMA BBA limit";
+    else if (n < 2000) ws.textContent = (2000 - n) + " words below the 2,000 minimum";
+    else ws.textContent = (n - 3500) + " words over the 3,500 maximum";
+  }
+  var apa = $("apaValue"); if (apa) apa.textContent = String(citationCount());
+  var cov = $("covValue"), cs = $("covSub");
+  if (cov && cs){
+    if (S.parsedLoaded){
+      cov.textContent = S.parsed.tasks.length + " Pass tasks · " + (S.parsed.merit || 0) + " Merit · " + (S.parsed.distinction || 0) + " Distinction";
+      cs.textContent = "From the brief analysed in tab 1. The writer targets Pass, Merit and Distinction criteria.";
+    } else {
+      cov.textContent = "No brief yet";
+      cs.textContent = "Load a sample or paste a brief in tab 1.";
+    }
+  }
+}
+function renderChips(){
+  var el = $("detectChips"); if (!el) return;
+  if (!S.parsedLoaded){ el.innerHTML = '<span class="chip neutral">No brief analysed yet</span>'; return; }
+  el.innerHTML = '<span class="chip">' + S.parsed.tasks.length + ' Core Tasks Detected</span>' +
+    '<span class="chip">' + (S.parsed.merit || 0) + ' Merit Extensions</span>' +
+    '<span class="chip">' + (S.parsed.distinction || 0) + ' Distinction Extensions</span>';
+}
+</script>
+
+<script>
+"use strict";
 /* ---------- Brief file upload ---------- */
 function loadScriptOnce(src){
   return new Promise(function(resolve, reject){
@@ -719,7 +1113,7 @@ function readBriefFile(file){
   showMsg("briefError", "");
   $("fileName").textContent = file.name;
   var name = file.name.toLowerCase();
-  if (name.endsWith(".txt")){
+  if (name.endsWith(".txt") || name.endsWith(".md")){
     var r = new FileReader();
     r.onload = function(){ $("briefText").value = String(r.result || ""); setStatus("Brief loaded from " + file.name + "."); };
     r.onerror = function(){ showMsg("briefError", "Could not read that text file. Try pasting the brief instead.", "err"); };
@@ -742,16 +1136,14 @@ function readBriefFile(file){
       });
     return;
   }
-  showMsg("briefError", "That file type is not supported. Upload a .txt or .docx brief, or paste the text.", "err");
+  showMsg("briefError", "That file type is not supported. Upload a .txt, .md or .docx brief, or paste the text.", "err");
 }
 
 /* ---------- Learn step rendering ---------- */
 function renderLearn(){
   var p = S.parsed;
-  $("fTitle").value = p.title || "";
-  $("fSubject").value = p.subject || "";
+  $("learnWrap").classList.remove("hidden");
   $("fWords").value = p.words || "";
-  $("fDeadline").value = p.deadline || "";
   $("criteriaText").value = p.criteria || "";
   var list = $("tasksList");
   list.innerHTML = "";
@@ -769,14 +1161,13 @@ function taskItemEl(t, idx){
     syncLearnFromUI();
     S.parsed.tasks.splice(idx, 1);
     renderLearn();
+    renderChips(); updateStatusCards();
   });
   return div;
 }
 function syncLearnFromUI(){
-  S.parsed.title = $("fTitle").value.trim();
-  S.parsed.subject = $("fSubject").value.trim();
+  readMetaUI();
   S.parsed.words = parseInt($("fWords").value, 10) || 0;
-  S.parsed.deadline = $("fDeadline").value.trim();
   S.parsed.criteria = $("criteriaText").value;
   var areas = document.querySelectorAll("[data-task]");
   var tasks = [];
@@ -786,6 +1177,258 @@ function syncLearnFromUI(){
     tasks.push({ label: old ? old.label : ("Task " + (idx + 1)), text: a.value });
   });
   if (areas.length) S.parsed.tasks = tasks;
+  var joined = S.parsed.tasks.map(function(t){ return t.text; }).join("\n");
+  var ext = scanExt(joined);
+  S.parsed.merit = ext.merit; S.parsed.distinction = ext.distinction;
+  if (S.parsedLoaded){ renderChips(); updateStatusCards(); }
+}
+
+/* ---------- Parse flow ---------- */
+function doParse(autoGenerate){
+  var text = $("briefText").value;
+  if (!text.trim()){ showMsg("briefError", "Paste your brief text or upload a brief file first.", "err"); return false; }
+  showMsg("briefError", "");
+  readMetaUI();
+  S.parsed = parseBrief(text);
+  S.parsedLoaded = true;
+  /* The brief itself wins for module and date; the Document / File Title field is the export title. */
+  if (S.parsed.subject) S.meta.module = S.parsed.subject;
+  if (S.parsed.deadline) S.meta.date = S.parsed.deadline;
+  if (S.meta.title) S.parsed.title = S.meta.title;
+  applyMetaToState();
+  saveLS(LS_META, S.meta);
+  S.emailDirty = false;
+  fillMetaUI();
+  renderLearn();
+  renderChips();
+  updateStatusCards();
+  setStatus("Learned your brief: " + S.parsed.tasks.length + " task(s), " + (S.parsed.merit || 0) + " Merit and " + (S.parsed.distinction || 0) + " Distinction extensions detected" +
+    (S.parsed.words ? ", target " + S.parsed.words + " words" : "") +
+    (S.parsed.deadline ? ", deadline " + S.parsed.deadline : "") + ".");
+  if (autoGenerate){
+    goStep(2);
+    generateAll();
+  }
+  return true;
+}
+
+/* ---------- Built-in sample briefs ---------- */
+var SAMPLE_FINACC = [
+  "ATHE Level 4 Diploma in Business and Management, Assignment Brief",
+  "Module: LV 4005 Financial and Management Accounting Techniques for Managers",
+  "Lecturer: Daw Kay Thi Khaing",
+  "Submission date: 30/10/2026",
+  "Word count: 3000 words (school band: 2000 to 3500 words)",
+  "",
+  "Task 1: Prepare speaker notes and slides comparing management and financial accounting systems and analysing techniques used for recording financial information.",
+  "- Merit: Assess stakeholder needs using a specific business example.",
+  "- Distinction: Evaluate the benefits of integrating financial and management accounting systems (ERP).",
+  "",
+  "Task 2: Analyse the components of working capital and explain the implications of a 6-month budget and cash flow forecast. The scenario includes rising monthly sales, a 45 to 75 day receipt delay caused by batch invoicing, immediate payment to suppliers despite 30-day credit terms, 3 months of stock held against a 2-week lead time, and a Month 3 deficit.",
+  "- Distinction: Evaluate the benefits of budgeting and cash flow forecasts for long-term financial stability.",
+  "",
+  "Task 3: Access the published financial statements of an organisation and assess performance using ratio analysis. Also analyse Conday and Co. Ltd: revenue $2,600k, gross profit $980k, PBIT $378k, PAT $225k, cash $0, bank overdraft $432k. Appraise a £100,000 Expansion project against a £100,000 Takeover project at a 10% cost of capital using NPV, Payback, ARR and IRR.",
+  "- Merit: Evaluate the usefulness and limitations of ratio analysis.",
+  "",
+  "Task 4: A coach trip has 56 seats, a fixed cost of £750, a variable cost of £8 per seat and a full price of £40 per seat. Calculate the break-even point, the profit at 60% capacity (rounded down), the marginal cost of one extra seat, and the profit if a further 20% of seats are sold at £25 each."
+].join("\n");
+
+var SAMPLE_PPL = [
+  "SAMPLE BRIEF for practice only. This is a generic example in ATHE style, not an official NMA College brief. Edit it freely.",
+  "Module: People in Organizations (Sample)",
+  "Word count: 2500 words",
+  "",
+  "Task 1: Explain the main functions of management and describe how organisational structure affects communication and decision making in a business.",
+  "- Merit: Analyse how leadership style can affect staff motivation, using a specific business example.",
+  "",
+  "Task 2: Describe the stages of team development and explain how a manager can build trust and resolve conflict within a team.",
+  "- Distinction: Evaluate the impact of organisational culture on business performance, with justified recommendations."
+].join("\n");
+
+function loadSampleFin(){
+  $("briefText").value = SAMPLE_FINACC;
+  S.meta.title = "Thitsar Financial Accounting";
+  S.meta.module = "LV 4005 Financial and Management Accounting Techniques for Managers";
+  S.meta.lecturer = "Daw Kay Thi Khaing";
+  S.meta.student = "Thit Sar";
+  S.meta.batch = "L-4 B-24 On Campus";
+  S.meta.date = "30/10/2026";
+  fillMetaUI();
+  if (doParse(false)) setStatus("Year 1 Financial Accounting brief loaded: 4 tasks, 2 Merit and 2 Distinction extensions. Check the details, then write from tab 2.");
+}
+function loadSamplePpl(){
+  $("briefText").value = SAMPLE_PPL;
+  S.meta.title = "People in Organizations (Sample)";
+  S.meta.module = "People in Organizations (Sample)";
+  fillMetaUI();
+  if (doParse(false)) setStatus("Sample brief loaded for practice. It is a generic ATHE style example, not an official NMA brief.");
+}
+
+/* ---------- Tab 3: formatted document preview ---------- */
+function renderPreview(){
+  var pv = $("previewDoc"); if (!pv) return;
+  var done = S.sections.filter(function(s){ return s.status === "done"; });
+  pv.setAttribute("data-hasrefs", "");
+  if (!done.length){
+    pv.removeAttribute("contenteditable");
+    pv.setAttribute("data-empty", "1");
+    pv.innerHTML = '<p class="dp-empty">Nothing to preview yet. Generate your assignment in tab 2, or append a humanized paragraph, and the formatted document appears here.</p>';
+    return;
+  }
+  pv.setAttribute("contenteditable", "true");
+  pv.removeAttribute("data-empty");
+  var html = "";
+  html += '<p class="dp-title"><span data-cover="title">' + esc(S.parsed.title || "Assignment") + '</span></p>';
+  if (S.meta.lecturer || S.profile.teacher) html += '<p class="dp-cover">Submitted to: <span data-cover="teacher">' + esc(S.meta.lecturer || S.profile.teacher) + '</span></p>';
+  if (S.meta.student || S.profile.student) html += '<p class="dp-cover">Submitted by: <span data-cover="student">' + esc(S.meta.student || S.profile.student) + '</span></p>';
+  if (S.meta.batch) html += '<p class="dp-cover"><span data-cover="batch">' + esc(S.meta.batch) + '</span></p>';
+  if (S.parsed.subject) html += '<p class="dp-cover">Module: <span data-cover="subject">' + esc(S.parsed.subject) + '</span></p>';
+  if (S.parsed.deadline) html += '<p class="dp-cover">Date of Submitted: <span data-cover="deadline">' + esc(S.parsed.deadline) + '</span></p>';
+  S.sections.forEach(function(sec, idx){
+    if (sec.status !== "done") return;
+    html += '<h3 class="dp-h">' + esc(sec.heading) + '</h3>';
+    sec.text.split(/\n+/).map(function(x){ return x.trim(); }).filter(Boolean).forEach(function(par){
+      html += '<p data-sec="' + idx + '">' + esc(par) + '</p>';
+    });
+  });
+  var refs = $("refsText").value.split("\n").map(function(r){ return r.trim(); }).filter(Boolean);
+  if (refs.length){
+    pv.setAttribute("data-hasrefs", "1");
+    html += '<h3 class="dp-h">References</h3>';
+    refs.forEach(function(r){ html += '<p data-ref="1">' + esc(r) + '</p>'; });
+  }
+  pv.innerHTML = html;
+}
+function syncPreviewToState(){
+  var pv = $("previewDoc"); if (!pv || pv.getAttribute("data-empty")) return;
+  pv.querySelectorAll("[data-cover]").forEach(function(el){
+    var key = el.getAttribute("data-cover");
+    var val = el.textContent.trim();
+    if (key === "title"){ S.parsed.title = val; S.meta.title = val; }
+    else if (key === "subject"){ S.parsed.subject = val; S.meta.module = val; }
+    else if (key === "teacher"){ S.meta.lecturer = val; S.profile.teacher = val; }
+    else if (key === "student"){ S.meta.student = val; S.profile.student = val; }
+    else if (key === "deadline"){ S.parsed.deadline = val; S.meta.date = val; }
+    else if (key === "batch"){ S.meta.batch = val; }
+  });
+  var byIdx = {};
+  pv.querySelectorAll("[data-sec]").forEach(function(el){
+    var idx = el.getAttribute("data-sec");
+    if (!byIdx[idx]) byIdx[idx] = [];
+    byIdx[idx].push(el.textContent.trim());
+  });
+  Object.keys(byIdx).forEach(function(idx){
+    var sec = S.sections[parseInt(idx, 10)];
+    if (sec) sec.text = byIdx[idx].filter(Boolean).join("\n\n");
+  });
+  if (pv.getAttribute("data-hasrefs")){
+    var refParas = [];
+    pv.querySelectorAll("[data-ref]").forEach(function(el){ var v = el.textContent.trim(); if (v) refParas.push(v); });
+    $("refsText").value = refParas.join("\n");
+  }
+  saveLS(LS_META, S.meta);
+  fillMetaUI();
+  updateWordCount();
+}
+function plainTextDocument(){
+  var lines = [];
+  lines.push(S.parsed.title || "Assignment");
+  if (S.parsed.subject) lines.push("Module: " + S.parsed.subject);
+  if (S.meta.lecturer) lines.push("Submitted to: " + S.meta.lecturer);
+  if (S.meta.student) lines.push("Submitted by: " + S.meta.student);
+  if (S.meta.batch) lines.push(S.meta.batch);
+  if (S.parsed.deadline) lines.push("Date of Submitted: " + S.parsed.deadline);
+  S.sections.forEach(function(sec){
+    if (sec.status !== "done") return;
+    lines.push("");
+    lines.push(sec.heading);
+    lines.push(sec.text);
+  });
+  var refs = $("refsText").value.trim();
+  if (refs){ lines.push(""); lines.push("References"); lines.push(refs); }
+  return lines.join("\n");
+}
+function copyText(text, msgId, okText){
+  function done(){ showMsg(msgId, okText, "ok"); }
+  function fallback(){
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove(); done();
+    } catch(e){ showMsg(msgId, "Copy failed in this browser. Select the text and copy it manually.", "err"); }
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else fallback();
+}
+
+/* ---------- Tab 4: Turnitin pre-check email ---------- */
+function shortModuleName(m){
+  var s = String(m || "").replace(/^module\s*:\s*/i, "").replace(/^LV\s*\d+\s*/i, "").trim();
+  if (/financial and management accounting/i.test(s)) return "Financial Accounting";
+  var cut = s.split(" Techniques")[0];
+  if (cut && cut.length >= 8 && cut.length < s.length) s = cut;
+  if (s.length > 40) s = s.slice(0, 40).trim();
+  return s || "Assignment";
+}
+function buildEmail(force){
+  var suEl = $("emailSubject"), bodyEl = $("emailBody");
+  if (!suEl || !bodyEl) return;
+  if (S.emailDirty && !force) return;
+  var student = S.meta.student || "Thit Sar";
+  var moduleFull = String(S.meta.module || S.parsed.subject || "").replace(/^module\s*:\s*/i, "").trim();
+  suEl.value = "For Assignment Review - " + shortModuleName(moduleFull) + " (" + student + ")";
+  bodyEl.value = [
+    "Dear Officials from NMA College,",
+    "",
+    "I've attached my assignment file (" + exportFileName() + ") for you to review to check.",
+    "",
+    "Here's my student and assignment details.",
+    "",
+    student,
+    "Year (1) Batch-24",
+    moduleFull || "Assignment",
+    "",
+    "Contact me via 09 457 322 394 & this email address.",
+    "",
+    "Thank you for reviewing my assignment."
+  ].join("\n");
+}
+function buildGmailUrl(){
+  return "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent($("emailTo").value.trim()) +
+    "&su=" + encodeURIComponent($("emailSubject").value) +
+    "&body=" + encodeURIComponent($("emailBody").value);
+}
+
+/* ---------- Tab 4: checklist and links ---------- */
+var CHECK_IDS = { file: "chkFile", slides: "chkSlides", sim: "chkSim", ai: "chkAi" };
+function fillChecklist(){
+  Object.keys(CHECK_IDS).forEach(function(k){
+    var el = $(CHECK_IDS[k]); if (el) el.checked = !!S.checklist[k];
+  });
+}
+function bindChecklist(){
+  Object.keys(CHECK_IDS).forEach(function(k){
+    var el = $(CHECK_IDS[k]); if (!el) return;
+    el.addEventListener("change", function(){ S.checklist[k] = el.checked; saveLS(LS_CHECK, S.checklist); });
+  });
+}
+function fillLinks(){
+  [["linkFin", S.links.fin], ["linkAW", S.links.aw], ["linkDoc", S.links.doc]].forEach(function(pair){
+    var inp = $(pair[0]); if (inp) inp.value = pair[1] || "";
+    var a = $(pair[0] + "Open"); if (a) a.href = pair[1] || "#";
+  });
+}
+function bindLinks(){
+  [["linkFin", "fin"], ["linkAW", "aw"], ["linkDoc", "doc"]].forEach(function(pair){
+    var inp = $(pair[0]); if (!inp) return;
+    inp.addEventListener("input", function(){
+      S.links[pair[1]] = inp.value.trim();
+      var a = $(pair[0] + "Open"); if (a) a.href = S.links[pair[1]] || "#";
+      saveLS(LS_LINKS, S.links);
+    });
+  });
 }
 </script>
 
@@ -924,6 +1567,7 @@ function updateWordCount(){
   S.sections.forEach(function(s){ if (s.status === "done") total += countWords(s.text); });
   total += countWords($("refsText").value);
   $("totalWords").textContent = String(total);
+  updateStatusCards();
 }
 function collectReferences(newRefs){
   var existing = $("refsText").value.split("\n").map(function(r){ return r.trim(); }).filter(Boolean);
@@ -934,6 +1578,7 @@ function collectReferences(newRefs){
     if (!seen[key]){ existing.push(r); seen[key] = true; }
   });
   $("refsText").value = existing.join("\n");
+  updateWordCount();
 }
 function runSection(idx, systemText){
   var sec = S.sections[idx];
@@ -946,8 +1591,9 @@ function runSection(idx, systemText){
     "\n\nTarget length for this section: about " + perTask + " words. Start with the heading line: " + sec.heading +
     "\nThen the section in prose paragraphs. Follow all system rules, including the References block at the end.";
   return claudeCall(systemText, userText).then(function(raw){
-    var split = splitReferences(humanize(raw));
-    sec.text = split.body;
+    /* Split the reference list off first so the humanizer pass never touches it. */
+    var split = splitReferences(raw);
+    sec.text = humanize(split.body);
     sec.status = "done";
     collectReferences(split.refs);
     renderProgress(); renderEditor();
@@ -960,8 +1606,8 @@ function runSection(idx, systemText){
 }
 function generateAll(){
   syncLearnFromUI();
-  if (!S.anthropicKey){ refreshGenGate(); showMsg("genError", "Add your Anthropic API key in Settings first. The guide above Step 3 explains how to get one from the Claude Console.", "err"); return; }
-  if (!S.parsed.tasks.length){ showMsg("genError", "No tasks yet. Go back to Step 2 and add at least one task.", "err"); return; }
+  if (!S.anthropicKey){ refreshGenGate(); showMsg("genError", "Add your Anthropic API key in Settings first. The guide at the top of this tab explains how to get one from the Claude Console.", "err"); return; }
+  if (!S.parsed.tasks.length){ showMsg("genError", "No tasks yet. Go back to tab 1 and add at least one task.", "err"); return; }
   showMsg("genError", "");
   S.generating = true; S.cancelRequested = false;
   $("genBtn").disabled = true; $("cancelBtn").classList.remove("hidden");
@@ -984,7 +1630,7 @@ function generateAll(){
     var done = S.sections.filter(function(s){ return s.status === "done"; });
     if (S.cancelRequested) setStatus("Generation cancelled. Finished sections are kept in the editor.");
     else if (failed.length) showMsg("genError", "Some sections failed: " + failed.map(function(s){ return s.heading + " (" + (s.error || "error") + ")"; }).join("; ") + ". Use the retry button on a failed section.", "err");
-    else setStatus("Generation complete: " + done.length + " sections, " + $("totalWords").textContent + " words. Review and edit in Step 3, then export in Step 4.");
+    else setStatus("Generation complete: " + done.length + " sections, " + $("totalWords").textContent + " words. Review and edit here, check tab 3, then export in tab 4.");
     if (done.length) renderEditor();
   });
 }
@@ -1096,6 +1742,7 @@ function buildDocumentXml(){
   if (p.student) body += paraXml("Student Name: " + p.student, { center: true });
   body += paraXml("Course: " + (p.course || ""), { center: true });
   body += paraXml("Module: " + (S.parsed.subject || p.module || ""), { center: true });
+  if (S.meta && S.meta.batch) body += paraXml("Batch: " + S.meta.batch, { center: true });
   if (p.teacher) body += paraXml("Teacher: " + p.teacher, { center: true });
   if (S.parsed.deadline) body += paraXml("Deadline: " + S.parsed.deadline, { center: true });
   body += paraXml(null, { pageBreak: true });
@@ -1170,7 +1817,11 @@ function exportFileName(){
   return (base || "Assignment") + ".docx";
 }
 function doExportDocx(){
-  if (!fullText().length){ showMsg("exportMsg", "Nothing to export yet. Generate the assignment in Step 3 first.", "err"); return null; }
+  if (!fullText().length){
+    showMsg("exportMsg", "Nothing to export yet. Generate the assignment in tab 2 first.", "err");
+    setStatus("Nothing to export yet. Generate the assignment in tab 2 first.", true);
+    return null;
+  }
   var blob = docxBlob();
   var url = URL.createObjectURL(blob);
   var a = document.createElement("a");
@@ -1178,6 +1829,7 @@ function doExportDocx(){
   document.body.appendChild(a); a.click();
   setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 800);
   showMsg("exportMsg", "Word file downloaded: " + exportFileName() + " (" + Math.round(blob.size / 1024) + " KB), formatted with your profile.", "ok");
+  setStatus("Word file downloaded: " + exportFileName() + ", formatted with your profile.");
   return blob;
 }
 </script>
@@ -1233,7 +1885,7 @@ function connectGoogle(){
 }
 function createGoogleDoc(){
   if (!S.google.token){ gShow("Connect Google first.", "err"); return; }
-  if (!fullText().length){ gShow("Nothing to upload yet. Generate the assignment in Step 3 first.", "err"); return; }
+  if (!fullText().length){ gShow("Nothing to upload yet. Generate the assignment in tab 2 first.", "err"); return; }
   var blob = docxBlob();
   var name = exportFileName().replace(/\.docx$/i, "");
   var boundary = "ag_boundary_" + Date.now();
@@ -1327,11 +1979,22 @@ function init(){
   try { S.anthropicKey = localStorage.getItem(LS_ANTHROPIC_KEY) || ""; } catch(e){ S.anthropicKey = ""; }
   S.profile = Object.assign({}, DEFAULT_PROFILE, loadLS(LS_PROFILE, {}));
   S.rubric = loadLS(LS_RUBRIC, DEFAULT_RUBRIC);
+  S.meta = Object.assign({}, DEFAULT_META, loadLS(LS_META, {}));
+  S.checklist = Object.assign({}, S.checklist, loadLS(LS_CHECK, {}));
+  S.links = Object.assign({}, DEFAULT_LINKS, loadLS(LS_LINKS, {}));
   var theme = "light";
   try { theme = localStorage.getItem("ag.theme") || "light"; } catch(e){}
   applyTheme(theme);
   fillSettingsUI();
+  fillMetaUI();
+  applyMetaToState();
+  fillChecklist();
+  fillLinks();
+  renderChips();
+  updateStatusCards();
+  buildEmail(true);
   refreshGenGate();
+  renderPreview();
 
   $("themeBtn").addEventListener("click", function(){
     var cur = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -1340,8 +2003,9 @@ function init(){
   $("settingsBtn").addEventListener("click", openSettings);
   $("closeSettingsBtn").addEventListener("click", closeSettings);
   $("scrim").addEventListener("click", closeSettings);
+  $("rulesSettingsBtn").addEventListener("click", openSettings);
   $("saveSettingsBtn").addEventListener("click", function(){
-    persistAll(); refreshGenGate();
+    persistAll(); fillMetaUI(); refreshGenGate();
     $("saveNote").textContent = "Saved.";
     setStatus("Settings saved in this browser.");
   });
@@ -1349,38 +2013,53 @@ function init(){
     $(id).addEventListener("change", function(){ persistAll(); refreshGenGate(); });
   });
 
-  document.querySelectorAll(".step-btn").forEach(function(b){
+  /* Tabs: click plus full keyboard support (arrows, Home, End). */
+  var tabBtns = Array.prototype.slice.call(document.querySelectorAll(".tab-btn"));
+  tabBtns.forEach(function(b){
     b.addEventListener("click", function(){ goStep(parseInt(b.getAttribute("data-step"), 10)); });
   });
+  document.querySelector(".tabs").addEventListener("keydown", function(ev){
+    var cur = tabBtns.indexOf(document.activeElement);
+    if (cur < 0) return;
+    var next = null;
+    if (ev.key === "ArrowRight") next = (cur + 1) % tabBtns.length;
+    else if (ev.key === "ArrowLeft") next = (cur - 1 + tabBtns.length) % tabBtns.length;
+    else if (ev.key === "Home") next = 0;
+    else if (ev.key === "End") next = tabBtns.length - 1;
+    if (next !== null){
+      ev.preventDefault();
+      goStep(parseInt(tabBtns[next].getAttribute("data-step"), 10));
+      tabBtns[next].focus();
+    }
+  });
+
+  /* Tab 1: brief, samples, metadata, parse */
   $("briefFile").addEventListener("change", function(){
     if (this.files && this.files[0]) readBriefFile(this.files[0]);
     this.value = "";
   });
-  $("parseBtn").addEventListener("click", function(){
-    var text = $("briefText").value;
-    if (!text.trim()){ showMsg("briefError", "Paste your brief text or upload a brief file first.", "err"); return; }
-    showMsg("briefError", "");
-    S.parsed = parseBrief(text);
-    renderLearn();
-    goStep(2);
-    setStatus("Learned your brief: " + S.parsed.tasks.length + " task(s) detected" +
-      (S.parsed.words ? ", target " + S.parsed.words + " words" : "") +
-      (S.parsed.deadline ? ", deadline " + S.parsed.deadline : "") + ". Check Step 2 and edit anything.");
+  $("sampleFinBtn").addEventListener("click", loadSampleFin);
+  $("samplePplBtn").addEventListener("click", loadSamplePpl);
+  ["mTitle","mModule","mLecturer","mStudent","mBatch","mSubDate"].forEach(function(id){
+    $(id).addEventListener("change", function(){ persistMeta(); });
   });
+  $("parseBtn").addEventListener("click", function(){ doParse(true); });
   $("addTaskBtn").addEventListener("click", function(){
     syncLearnFromUI();
     S.parsed.tasks.push({ label: "Task " + (S.parsed.tasks.length + 1), text: "" });
     renderLearn();
+    renderChips(); updateStatusCards();
   });
-  $("backToBrief").addEventListener("click", function(){ syncLearnFromUI(); goStep(1); });
   $("toGenerateBtn").addEventListener("click", function(){
     syncLearnFromUI();
     if (!S.parsed.tasks.length || !S.parsed.tasks.some(function(t){ return t.text.trim(); })){
       showMsg("learnError", "Add at least one task with text before generating.", "err"); return;
     }
     showMsg("learnError", "");
-    goStep(3);
+    goStep(2);
   });
+
+  /* Tab 2: writer and humanizer */
   $("genBtn").addEventListener("click", generateAll);
   $("cancelBtn").addEventListener("click", function(){
     S.cancelRequested = true;
@@ -1388,6 +2067,56 @@ function init(){
     setStatus("Cancelling after the current section.");
   });
   $("refsText").addEventListener("input", updateWordCount);
+  $("humBtn").addEventListener("click", function(){
+    var res = humanizePass($("humIn").value);
+    $("humOut").value = res.text;
+    $("humStats").textContent = "Banned AI words removed: " + res.replaced + " phrases replaced · Sentence burstiness: " + res.burstiness + " (local indicator only, not a Turnitin score)";
+    showMsg("humMsg", res.text ? "Humanizer pass applied. Numbers and citations were left untouched." : "Paste a paragraph first.", res.text ? "ok" : "err");
+  });
+  $("humAppendBtn").addEventListener("click", function(){
+    var text = $("humOut").value.trim();
+    if (!text){ showMsg("humMsg", "Run the humanizer pass first, then append the result.", "err"); return; }
+    S.sections.push({ heading: "Additional paragraph", task: "", text: text, status: "done", error: "" });
+    renderProgress(); renderEditor();
+    showMsg("humMsg", "Paragraph appended to the assignment document. See it in tab 3 (Word Doc Preview).", "ok");
+    setStatus("Paragraph appended to the document. Total words: " + documentWordTotal() + ".");
+  });
+
+  /* Tab 3: preview */
+  var pvTimer = null;
+  $("previewDoc").addEventListener("input", function(){
+    clearTimeout(pvTimer);
+    pvTimer = setTimeout(syncPreviewToState, 250);
+  });
+  $("copyTextBtn").addEventListener("click", function(){
+    if (!fullText().length){ showMsg("previewMsg", "Nothing to copy yet. Generate the assignment in tab 2 first.", "err"); return; }
+    copyText(plainTextDocument(), "previewMsg", "Full assignment text copied.");
+  });
+  $("previewDlBtn").addEventListener("click", function(){
+    persistAll();
+    showMsg("exportMsg", "");
+    var blob = doExportDocx();
+    if (!blob) showMsg("previewMsg", "Nothing to export yet. Generate the assignment in tab 2 first.", "err");
+  });
+
+  /* Tab 4: email, export, checklist, Google */
+  ["emailSubject","emailBody"].forEach(function(id){
+    $(id).addEventListener("input", function(){ S.emailDirty = true; });
+  });
+  $("copyEmailBtn").addEventListener("click", function(){
+    copyText("Subject: " + $("emailSubject").value + "\n\n" + $("emailBody").value, "emailMsg", "Email text copied. Paste it into your email and attach the Word file.");
+  });
+  $("gmailBtn").addEventListener("click", function(){
+    window.open(buildGmailUrl(), "_blank", "noopener");
+    showMsg("emailMsg", "Gmail compose opened with the To, Subject and Body filled in. Remember to attach the Word file before sending.", "info");
+  });
+  bindChecklist();
+  bindLinks();
+  $("quickExportBtn").addEventListener("click", function(){
+    persistAll();
+    showMsg("exportMsg", "");
+    doExportDocx();
+  });
   $("exportDocxBtn").addEventListener("click", function(){
     persistAll();
     showMsg("exportMsg", "");
@@ -1406,13 +2135,16 @@ function init(){
   $("gAttachBtn").addEventListener("click", attachToClassroom);
 
   if (S.settings.clientId) $("gGuide").classList.remove("show"), $("gGuide").classList.add("hidden");
-  setStatus("Ready. Paste your brief in Step 1 to begin.");
+  setStatus("Ready. Load a sample brief or paste your own in tab 1 to begin.");
 }
 
 /* Test and integration hook */
 window.AssignmentGen = {
-  parseBrief: parseBrief, humanize: humanize, splitReferences: splitReferences,
-  buildDocxBytes: buildDocxBytes, countWords: countWords, state: S
+  parseBrief: parseBrief, humanize: humanize, humanizePass: humanizePass,
+  splitReferences: splitReferences, buildDocxBytes: buildDocxBytes,
+  buildGmailUrl: buildGmailUrl, countWords: countWords,
+  loadSampleFin: loadSampleFin, loadSamplePpl: loadSamplePpl,
+  state: S
 };
 
 try { init(); }
