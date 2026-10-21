@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NMA College Digital Assignment Generator &amp; Humanizer</title>
+<title>NXTGEN · Assignment Generator &amp; Humanizer</title>
 <style>
 /* Assignment Generator design system.
    Presentation only: tokens, layout polish, states, responsive rules. */
 :root{
   --bg:#f3f5fa; --bg-top:#e8edfb;
   --surface:#ffffff; --surface2:#eef1f8; --field:#fbfcfe;
-  --ink:#182238; --ink2:#525d78; --placeholder:#8a94ad;
+  --ink:#182238; --ink2:#46536e; --placeholder:#626e88;
   --line:#dde3ef; --line-strong:#c6d0e3;
   --accent:#3b5bdb; --accent2:#2f4bc0; --accent-soft:#e8edfd; --accent-ink:#2f4bc0;
-  --ok:#178a5b; --ok-bg:rgba(23,138,91,.10);
+  --ok:#12734c; --ok-bg:rgba(18,115,76,.10);
   --warn:#b45309; --warn-bg:rgba(217,119,6,.12);
-  --err:#cf3f3f; --err-bg:rgba(207,63,63,.09);
+  --err:#b92f2f; --err-bg:rgba(185,47,47,.09);
   --ring:rgba(59,91,219,.20);
   --header-bg:rgba(255,255,255,.88);
   --glow:rgba(59,91,219,.08);
@@ -29,7 +29,7 @@
 [data-theme="dark"]{
   --bg:#0d1120; --bg-top:#141b33;
   --surface:#161c2f; --surface2:#1e2742; --field:#121828;
-  --ink:#edf0fa; --ink2:#a3adc7; --placeholder:#68738f;
+  --ink:#edf0fa; --ink2:#a3adc7; --placeholder:#8b96b3;
   --line:#2a3350; --line-strong:#3a466a;
   --accent:#6d8dff; --accent2:#87a2ff; --accent-soft:#22305c; --accent-ink:#aebfff;
   --ok:#3ecf8e; --ok-bg:rgba(62,207,142,.13);
@@ -63,6 +63,22 @@ input::placeholder,textarea::placeholder{color:var(--placeholder)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 .wrap{max-width:1060px;margin:0 auto;padding:0 18px 64px}
 
+.skip-link{
+  position:absolute;left:12px;top:-70px;z-index:100;
+  background:var(--accent);color:#fff;padding:12px 18px;border-radius:0 0 10px 10px;
+  font-weight:600;text-decoration:none;transition:top .18s var(--ease);
+}
+.skip-link:focus{top:0;color:#fff}
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+.tab-tick{
+  display:none;font-size:11.5px;font-weight:700;color:var(--ok);
+  border:1px solid var(--ok);border-radius:999px;padding:1px 8px;line-height:1.5;
+}
+.tab-btn[data-done="1"] .tab-tick{display:inline-flex}
+
 /* Header */
 header.top{
   position:sticky;top:0;z-index:40;background:var(--header-bg);
@@ -83,7 +99,7 @@ h1.appname{font-size:20px;font-weight:700;margin:0;letter-spacing:-.01em;line-he
 .icon-btn{
   display:inline-flex;align-items:center;gap:7px;
   border:1px solid var(--line);background:var(--surface);color:var(--ink);
-  border-radius:var(--r-md);padding:8px 12px;font-size:14px;font-weight:500;
+  border-radius:var(--r-md);padding:8px 12px;font-size:14px;font-weight:500;min-height:44px;
   transition:border-color .18s var(--ease),background .18s var(--ease),transform .18s var(--ease);
 }
 .icon-btn svg{width:17px;height:17px;stroke:currentColor}
@@ -110,7 +126,7 @@ h1.appname{font-size:20px;font-weight:700;margin:0;letter-spacing:-.01em;line-he
   display:inline-flex;align-items:center;gap:9px;
   border:1px solid transparent;border-bottom:3px solid transparent;
   background:transparent;color:var(--ink2);
-  padding:11px 15px;font-weight:600;font-size:14.5px;
+  padding:11px 15px;font-weight:600;font-size:14.5px;min-height:48px;
   border-radius:12px 12px 0 0;margin-bottom:-2px;
   transition:color .18s var(--ease),background .18s var(--ease),border-color .18s var(--ease);
 }
@@ -156,7 +172,8 @@ select.in{
 [data-theme="dark"] select.in{
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a3adc7' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
 }
-textarea.ta{min-height:120px;resize:vertical}
+textarea.ta{min-height:120px;resize:vertical;font-size:15.5px}
+input.in,select.in{min-height:44px}
 textarea.ta.tall{min-height:230px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -166,7 +183,7 @@ textarea.ta.tall{min-height:230px}
 .btn{
   border:1px solid var(--accent);color:#fff;border-radius:var(--r-md);
   background:linear-gradient(180deg,var(--accent),var(--accent2));
-  padding:10px 17px;font-weight:600;font-size:14.5px;
+  padding:10px 17px;font-weight:600;font-size:14.5px;min-height:44px;
   display:inline-flex;align-items:center;gap:8px;
   transition:box-shadow .18s var(--ease),transform .18s var(--ease),background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease);
 }
@@ -178,7 +195,7 @@ textarea.ta.tall{min-height:230px}
 .btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
 .btn.ghost:hover{background:var(--surface2);border-color:var(--line-strong);box-shadow:var(--shadow-sm)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
-.btn.small{padding:8px 14px;font-size:14px}
+.btn.small{padding:8px 14px;font-size:14px;min-height:44px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
 
 /* Messages */
@@ -216,7 +233,7 @@ textarea.ta.tall{min-height:230px}
 .task-head .sp{margin-left:auto}
 .mini-btn{
   border:1px solid var(--line);background:var(--surface);border-radius:var(--r-sm);
-  padding:5px 10px;font-size:13px;color:var(--ink);
+  padding:5px 10px;font-size:13px;color:var(--ink);min-height:44px;
   transition:border-color .18s var(--ease),color .18s var(--ease),background .18s var(--ease);
 }
 .mini-btn:hover{border-color:var(--err);color:var(--err);background:var(--err-bg)}
@@ -243,7 +260,7 @@ textarea.ta.tall{min-height:230px}
   background:var(--surface);box-shadow:var(--shadow-sm);
 }
 .sec-edit h3{margin:0 0 9px}
-.sec-edit textarea{min-height:200px}
+.sec-edit textarea{min-height:200px;font-size:15.5px}
 .wordbar{
   display:flex;gap:8px 18px;flex-wrap:wrap;font-size:13.5px;color:var(--ink2);
   background:var(--surface2);border:1px solid var(--line);border-radius:var(--r-md);
@@ -274,7 +291,7 @@ textarea.ta.tall{min-height:230px}
 .check-item{
   display:flex;gap:10px;align-items:flex-start;
   border:1px solid var(--line);border-radius:var(--r-md);
-  padding:11px 13px;background:var(--surface2);font-size:14.5px;cursor:pointer;
+  padding:11px 13px;background:var(--surface2);font-size:14.5px;cursor:pointer;min-height:44px;
 }
 .check-item input{width:18px;height:18px;margin-top:2px;accent-color:var(--accent);flex:0 0 auto}
 
@@ -341,13 +358,14 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to main content</a>
 <header class="top">
   <div class="top-in">
     <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
     <div>
-      <h1 class="appname">NMA College Digital Assignment Generator &amp; Humanizer</h1>
+      <h1 class="appname">NXTGEN <span style="font-weight:600;color:var(--ink2);font-size:15px">Assignment Generator &amp; Humanizer</span></h1>
       <p class="tagline">ATHE Level 4/5 Ready</p>
-      <p class="profile-line">Student Profile: Thit Sar · L-4 B-24 On Campus · Word Docs &amp; Google Classroom Sync</p>
+      <p class="profile-line">For students everywhere · Word documents &amp; Google Classroom sync</p>
     </div>
     <div class="top-actions">
       <button class="btn small" id="quickExportBtn" type="button">
@@ -361,7 +379,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
   <div id="statusLine" role="status" aria-live="polite"><div class="in" id="statusText">Ready.</div></div>
 </header>
 
-<div class="wrap">
+<main class="wrap" id="main">
   <!-- Status cards: every value is computed live from the real document and brief -->
   <div class="stat-row" role="group" aria-label="Assignment status">
     <div class="stat-card">
@@ -372,12 +390,12 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
     <div class="stat-card">
       <div class="lab">Turnitin AI Detection</div>
       <div class="val small">Not checked yet</div>
-      <div class="sub">The official AI report comes from the NMA email pre-check in tab 4.</div>
+      <div class="sub">The official AI report comes from your school's email pre-check in tab 4.</div>
     </div>
     <div class="stat-card">
       <div class="lab">Plagiarism / Similarity</div>
       <div class="val small">Not checked yet (max 20%)</div>
-      <div class="sub">Checked by the NMA email pre-check in tab 4, not inside this app.</div>
+      <div class="sub">Checked by your school's email pre-check in tab 4, not inside this app.</div>
     </div>
     <div class="stat-card">
       <div class="lab">APA Citations</div>
@@ -392,21 +410,21 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
   </div>
 
   <div class="tabs" role="tablist" aria-label="Assignment generator sections">
-    <button class="tab-btn" type="button" role="tab" id="tab-1" data-step="1" aria-selected="true" aria-controls="panel-1"><span class="num">1</span><span>Assignment Brief &amp; Rules</span></button>
-    <button class="tab-btn" type="button" role="tab" id="tab-2" data-step="2" aria-selected="false" aria-controls="panel-2" tabindex="-1"><span class="num">2</span><span>AI Writer &amp; Humanizer</span></button>
-    <button class="tab-btn" type="button" role="tab" id="tab-3" data-step="3" aria-selected="false" aria-controls="panel-3" tabindex="-1"><span class="num">3</span><span>Word Doc Preview</span></button>
-    <button class="tab-btn" type="button" role="tab" id="tab-4" data-step="4" aria-selected="false" aria-controls="panel-4" tabindex="-1"><span class="num">4</span><span>Turnitin &amp; Classroom Sync</span></button>
+    <button class="tab-btn" type="button" role="tab" id="tab-1" data-step="1" aria-selected="true" aria-controls="panel-1"><span class="num">1</span><span>Assignment Brief &amp; Rules</span><span class="tab-tick" aria-hidden="true">Done</span><span class="sr-only tab-state" id="tabState-1"></span></button>
+    <button class="tab-btn" type="button" role="tab" id="tab-2" data-step="2" aria-selected="false" aria-controls="panel-2" tabindex="-1"><span class="num">2</span><span>AI Writer &amp; Humanizer</span><span class="tab-tick" aria-hidden="true">Done</span><span class="sr-only tab-state" id="tabState-2"></span></button>
+    <button class="tab-btn" type="button" role="tab" id="tab-3" data-step="3" aria-selected="false" aria-controls="panel-3" tabindex="-1"><span class="num">3</span><span>Word Doc Preview</span><span class="tab-tick" aria-hidden="true">Done</span><span class="sr-only tab-state" id="tabState-3"></span></button>
+    <button class="tab-btn" type="button" role="tab" id="tab-4" data-step="4" aria-selected="false" aria-controls="panel-4" tabindex="-1"><span class="num">4</span><span>Turnitin &amp; Classroom Sync</span><span class="tab-tick" aria-hidden="true">Done</span><span class="sr-only tab-state" id="tabState-4"></span></button>
   </div>
 
   <!-- TAB 1: BRIEF AND RULES -->
   <section id="panel-1" role="tabpanel" aria-labelledby="tab-1">
     <div class="card">
       <h2>Upload or Paste Assignment Question</h2>
-      <p class="hint">Drop any NMA College / ATHE assignment brief below to automatically extract tasks, Merit and Distinction extensions, and required calculations. Nothing leaves your device until you generate in tab 2.</p>
+      <p class="hint">Drop any ATHE assignment brief below to automatically extract tasks, Merit and Distinction extensions, and required calculations. Nothing leaves your device until you generate in tab 2.</p>
       <div class="row" style="margin-top:2px">
-        <button class="btn secondary" id="sampleFinBtn" type="button">Load Year 1 Financial Accounting</button>
-        <button class="btn ghost" id="samplePplBtn" type="button">Load People in Organizations</button>
-        <span class="hint" style="margin:0">Samples fill the brief and the details below. Edit anything.</span>
+        <button class="btn secondary" id="sampleFinBtn" type="button">Load sample: Financial Accounting</button>
+        <button class="btn ghost" id="samplePplBtn" type="button">Load sample: People in Organizations</button>
+        <span class="hint" style="margin:0">Samples are practice briefs, labelled SAMPLE. They fill the brief and the details below. Edit anything.</span>
       </div>
       <label class="f" for="briefText">Assignment Scenario &amp; Tasks Brief</label>
       <textarea class="ta tall" id="briefText" placeholder="Paste the full assignment brief here: tasks, questions, word count, deadline, marking criteria."></textarea>
@@ -419,11 +437,11 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
         <span id="fileName" class="hint" style="margin:0"></span>
       </div>
       <div class="grid3">
-        <div><label class="f" for="mTitle">Document / File Title</label><input class="in" id="mTitle" type="text"></div>
-        <div><label class="f" for="mModule">Module Name &amp; Code</label><input class="in" id="mModule" type="text" placeholder="e.g. LV 4005 Financial and Management Accounting"></div>
-        <div><label class="f" for="mLecturer">Lecturer (Submitted To)</label><input class="in" id="mLecturer" type="text"></div>
-        <div><label class="f" for="mStudent">Student Name (Submitted By)</label><input class="in" id="mStudent" type="text"></div>
-        <div><label class="f" for="mBatch">Batch &amp; Mode</label><input class="in" id="mBatch" type="text"></div>
+        <div><label class="f" for="mTitle">Document / File Title</label><input class="in" id="mTitle" type="text" placeholder="e.g. My Financial Accounting Assignment"></div>
+        <div><label class="f" for="mModule">Module Name &amp; Code</label><input class="in" id="mModule" type="text" placeholder="e.g. Financial and Management Accounting Techniques for Managers"></div>
+        <div><label class="f" for="mLecturer">Lecturer (Submitted To)</label><input class="in" id="mLecturer" type="text" placeholder="Your lecturer's name"></div>
+        <div><label class="f" for="mStudent">Student Name (Submitted By)</label><input class="in" id="mStudent" type="text" placeholder="Your full name"></div>
+        <div><label class="f" for="mBatch">Batch &amp; Mode</label><input class="in" id="mBatch" type="text" placeholder="e.g. Level 4 · Batch 24 · On Campus"></div>
         <div><label class="f" for="mSubDate">Submission Date</label><input class="in" id="mSubDate" type="text" placeholder="e.g. 30/10/2026"></div>
       </div>
       <div class="chips" id="detectChips"><span class="chip neutral">No brief analysed yet</span></div>
@@ -440,7 +458,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
         <h3>What it learned: check and edit before writing</h3>
         <p class="hint">The generator follows these fields. Fix anything here, or in the details above, before generating.</p>
         <div class="grid2">
-          <div><label class="f" for="fWords">Word count target (total)</label><input class="in" id="fWords" type="number" min="0" step="50" placeholder="e.g. 2500 (NMA band: 2000 to 3500)"></div>
+          <div><label class="f" for="fWords">Word count target (total)</label><input class="in" id="fWords" type="number" min="0" step="50" placeholder="e.g. 2500 (typical band: 2000 to 3500)"></div>
         </div>
         <h3>Tasks and questions detected</h3>
         <div id="tasksList"></div>
@@ -455,9 +473,9 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
     </div>
 
     <div class="card">
-      <h2>NMA Format &amp; Scoring Rules</h2>
+      <h2>Format &amp; Scoring Rules</h2>
       <p class="hint"><span class="chip okchip">Auto-Enforced</span></p>
-      <p class="hint">Extracted from the BBA Program Academic Writing class and the assignment instructions. Word exports follow your format profile in Settings, which is prefilled with exactly these values.</p>
+      <p class="hint">Covers the standard ATHE assignment format and scoring. Word exports follow your format profile in Settings, which is prefilled with exactly these values.</p>
       <ul class="rules-list">
         <li><b>Font Type &amp; Size:</b> Times New Roman (14pt headings / 12pt body)</li>
         <li><b>Line &amp; Para Spacing:</b> 1.5 line, before 0pt, after 0pt</li>
@@ -465,7 +483,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
         <li><b>Headings &amp; Page No:</b> Left aligned headings, page numbers bottom center</li>
         <li><b>Required Word Count:</b> 2,000 to 3,500 words</li>
         <li><b>Turnitin Thresholds:</b> Similarity at or under 20%, AI report required (from the tab 4 email pre-check)</li>
-        <li><b>APA Referencing Rules (NMA):</b>
+        <li><b>APA Referencing Rules:</b>
           <ul>
             <li>Text Books: Author (Year), Name of textbook, Edition, Publisher.</li>
             <li>Journal: Author (Year), Title of paper, Name of Journal, Vol ( ) No ( ), Page No.</li>
@@ -529,16 +547,16 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
 
     <div class="card">
       <h2>Turnitin Humanizer &amp; Section Editor</h2>
-      <p class="hint">Modeled on a natural student voice profile. Paste any draft paragraph below and run the pass. It strips AI cliché vocabulary and evens out the sentence rhythm locally, in your browser. Numbers, in-text citations and the reference list are never touched, and no em dashes survive the pass. Only the official NMA email pre-check in tab 4 can give a real Turnitin result.</p>
+      <p class="hint">Modeled on a natural student voice profile. Paste any draft paragraph below and run the pass. It strips AI cliché vocabulary and evens out the sentence rhythm locally, in your browser. Numbers, in-text citations and the reference list are never touched, and no em dashes survive the pass. Only your school's email pre-check in tab 4 can give a real Turnitin result.</p>
       <label class="f" for="humIn">Paste Any Draft / AI Paragraph to Humanize</label>
       <textarea class="ta" id="humIn" placeholder="Paste a paragraph here, for example: Moreover, it is imperative to delve into the multifaceted tapestry of working capital management."></textarea>
       <div class="row">
         <button class="btn" id="humBtn" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8Z"/></svg>
-          Apply Thit Sar Humanizer Pass
+          Apply Humanizer Pass
         </button>
       </div>
-      <label class="f" for="humOut">Humanized NMA Output</label>
+      <label class="f" for="humOut">Humanized Output</label>
       <textarea class="ta" id="humOut" readonly placeholder="The humanized paragraph appears here."></textarea>
       <p class="hint" id="humStats" style="margin-top:8px">Banned AI words removed: 0 phrases replaced · Sentence burstiness: not measured yet</p>
       <div class="row">
@@ -546,7 +564,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
       </div>
       <div class="msg" id="humMsg" role="status"></div>
       <hr class="divider">
-      <h3>Thit Sar Voice Card, Rules Applied</h3>
+      <h3>Voice Card, Rules Applied</h3>
       <ol class="voice-list">
         <li><b>Zero AI Cliché Vocabulary.</b> Automatically strips words commonly flagged as AI clichés: delve, tapestry, underscore, testament, pivotal, holistic, paradigm, spearhead, utilize.</li>
         <li><b>Natural Sentence Rhythm.</b> Mixes concise declarative sentences with detailed analytical explanations and practical business examples (for example the cases and figures in your brief).</li>
@@ -558,7 +576,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
   <!-- TAB 3: WORD DOC PREVIEW -->
   <section id="panel-3" role="tabpanel" aria-labelledby="tab-3" class="hidden">
     <div class="card">
-      <h2>Exact NMA College Formatted Document Preview (Editable)</h2>
+      <h2>Formatted Document Preview (Editable)</h2>
       <p class="hint">Times New Roman · 14pt left-aligned headings · 12pt body · 1.5 line spacing · 1.5in left margin · APA references. Click into the document and type to edit; edits stay in sync with the Word export.</p>
       <div class="row" style="margin-top:2px">
         <button class="btn secondary" id="copyTextBtn" type="button">
@@ -577,10 +595,10 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
   <!-- TAB 4: TURNITIN AND CLASSROOM SYNC -->
   <section id="panel-4" role="tabpanel" aria-labelledby="tab-4" class="hidden">
     <div class="card">
-      <h2>Step 1: NMA Turnitin Pre-Check Email</h2>
-      <p class="hint">Required before Classroom turn-in. Email your Word file first to receive your official Turnitin Similarity PDF (at or under 20%) and AI Report PDF. Attach the downloaded .docx file to the email yourself; this app prepares the text and opens Gmail for you.</p>
+      <h2>Step 1: Turnitin Pre-Check Email</h2>
+      <p class="hint">If your school offers an assignment checking service, email your Word file there before Classroom turn-in to receive your official Turnitin Similarity PDF (at or under 20%) and AI Report PDF. Attach the downloaded .docx file to the email yourself; this app prepares the text and opens Gmail for you. Save the checking address below once and it is remembered in this browser.</p>
       <label class="f" for="emailTo">To</label>
-      <input class="in" id="emailTo" type="text" readonly value="nmauniversity.assignmentcheck@gmail.com">
+      <input class="in" id="emailTo" type="text" placeholder="Your school's assignment checking address">
       <label class="f" for="emailSubject">Subject</label>
       <input class="in" id="emailSubject" type="text">
       <label class="f" for="emailBody">Email body</label>
@@ -592,7 +610,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
         </button>
         <button class="btn" id="gmailBtn" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>
-          Open Gmail Compose to NMA Assignment Check
+          Open Gmail Compose
         </button>
       </div>
       <div class="msg" id="emailMsg" role="status"></div>
@@ -600,7 +618,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
 
     <div class="card">
       <h2>Step 2: Attach to Google Classroom &amp; Turn In</h2>
-      <p class="hint">Due: <b id="dueLine">not set</b>. From the NMA Classroom guidance on submitting assignment files, verify all required files before clicking Turn in inside Classroom.</p>
+      <p class="hint">Due: <b id="dueLine">not set</b>. From standard classroom guidance on submitting assignment files, verify all required files before clicking Turn in inside Classroom.</p>
       <div class="row" style="margin-top:2px">
         <button class="btn" id="exportDocxBtn" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
@@ -611,7 +629,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
       <div class="msg" id="exportMsg" role="status"></div>
       <h3>Turn-in checklist</h3>
       <div class="check-list">
-        <label class="check-item"><input type="checkbox" id="chkFile"><span>Assignment Word file (2,000 to 3,500 words, NMA format)</span></label>
+        <label class="check-item"><input type="checkbox" id="chkFile"><span>Assignment Word file (2,000 to 3,500 words, your school format)</span></label>
         <label class="check-item"><input type="checkbox" id="chkSlides"><span>Presentation slides (Task 1) with speaker notes</span></label>
         <label class="check-item"><input type="checkbox" id="chkSim"><span>Turnitin Similarity Report PDF (at or under 20%)</span></label>
         <label class="check-item"><input type="checkbox" id="chkAi"><span>Turnitin AI Report PDF</span></label>
@@ -646,27 +664,27 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
       <div class="msg" id="gMsg" role="status"></div>
       <p class="hint">Attach adds the created Google Doc to your own student submission for the chosen coursework. It does not turn the work in; you still press Turn in inside Classroom yourself.</p>
       <hr class="divider">
-      <h3>Direct NMA Google Classroom Links</h3>
+      <h3>Your links</h3>
       <div class="link-row">
-        <span class="lab">Financial Accounting Classroom</span>
-        <input class="in link-in" id="linkFin" type="text">
-        <a class="btn ghost small" id="linkFinOpen" href="#" target="_blank" rel="noopener">Open</a>
+        <label class="lab" for="linkFin">Classroom course</label>
+        <input class="in link-in" id="linkFin" type="text" placeholder="Paste your Classroom course link">
+        <a class="btn ghost small" id="linkFinOpen" href="#" target="_blank" rel="noopener" aria-label="Open the Classroom course link">Open</a>
       </div>
       <div class="link-row">
-        <span class="lab">Academic Writing Classroom</span>
-        <input class="in link-in" id="linkAW" type="text">
-        <a class="btn ghost small" id="linkAWOpen" href="#" target="_blank" rel="noopener">Open</a>
+        <label class="lab" for="linkAW">Academic writing class</label>
+        <input class="in link-in" id="linkAW" type="text" placeholder="Paste your academic writing class link">
+        <a class="btn ghost small" id="linkAWOpen" href="#" target="_blank" rel="noopener" aria-label="Open the academic writing class link">Open</a>
       </div>
       <div class="link-row">
-        <span class="lab">Delivered Google Doc</span>
-        <input class="in link-in" id="linkDoc" type="text">
-        <a class="btn ghost small" id="linkDocOpen" href="#" target="_blank" rel="noopener">Open</a>
+        <label class="lab" for="linkDoc">My assignment doc</label>
+        <input class="in link-in" id="linkDoc" type="text" placeholder="Paste your Google Doc link">
+        <a class="btn ghost small" id="linkDocOpen" href="#" target="_blank" rel="noopener" aria-label="Open my assignment doc link">Open</a>
       </div>
     </div>
   </section>
 
-  <footer class="foot">Assignment Generator runs fully in your browser. Your brief, keys and drafts stay on this device.</footer>
-</div>
+  <footer class="foot">NXTGEN is a free study tool. Your briefs, drafts and keys stay in your browser.</footer>
+</main>
 
 <!-- SETTINGS DRAWER -->
 <div class="scrim" id="scrim"></div>
@@ -718,7 +736,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
 
   <div class="divider"></div>
   <h3>School format profile</h3>
-  <p class="hint">Prefilled with the NMA College format. Update these values here any time your school format changes, and every export follows the new profile.</p>
+  <p class="hint">Prefilled with the standard ATHE assignment format. Update these values here any time your school format changes, and every export follows the new profile.</p>
   <div class="grid2">
     <div><label class="f" for="pfFont">Font</label><input class="in" id="pfFont" type="text"></div>
     <div><label class="f" for="pfRefStyle">Referencing style</label><input class="in" id="pfRefStyle" type="text"></div>
@@ -733,7 +751,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
     <div><label class="f" for="pfMB">Margin bottom (in)</label><input class="in" id="pfMB" type="number" min="0.3" max="3" step="0.1"></div>
   </div>
   <h3>Cover page</h3>
-  <p class="hint">School cover page pattern: a bold module line, a two column Submitted to and Submitted by block, a centered cohort line such as L-4 B-24 On Campus, and a centered Date of Submitted line. A brief's own instructions always override this sample format. The tab 1 detail fields feed the same cover values.</p>
+  <p class="hint">School cover page pattern: a bold module line, a two column Submitted to and Submitted by block, a centered cohort line such as Level 4, Batch 24, On Campus, and a centered Date of Submitted line. A brief's own instructions always override this sample format. The tab 1 detail fields feed the same cover values.</p>
   <div class="grid2">
     <div><label class="f" for="pfStudent">Student name</label><input class="in" id="pfStudent" type="text" placeholder="Your full name"></div>
     <div><label class="f" for="pfCourse">Course</label><input class="in" id="pfCourse" type="text" placeholder="e.g. BBA Program"></div>
@@ -743,7 +761,7 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
 
   <div class="divider"></div>
   <h3>Scoring rubric</h3>
-  <p class="hint">Prefilled with the real NMA College marking rules from the BBA Program Academic Writing class. The generator writes to score well against this rubric; edit it any time your school scheme changes.</p>
+  <p class="hint">Prefilled with the ATHE marking rules. The generator writes to score well against this rubric; edit it any time your school scheme changes.</p>
   <label class="f" for="rubricText">Rubric text</label>
   <textarea class="ta" id="rubricText" style="min-height:170px"></textarea>
   <div class="row"><button class="btn" id="saveSettingsBtn" type="button">Save settings</button><span class="hint" id="saveNote" style="margin:0" role="status"></span></div>
@@ -766,12 +784,13 @@ var LS_RUBRIC   = "ag.rubric.v1";
 var LS_META     = "ag.meta.v1";
 var LS_CHECK    = "ag.checklist.v1";
 var LS_LINKS    = "ag.links.v1";
+var LS_PRECHECK = "ag.precheck.v1";
 
 var DEFAULT_PROFILE = {
   font: "Times New Roman", headingSize: 14, bodySize: 12, lineSpacing: 1.5,
   marginL: 1.5, marginR: 1.0, marginT: 1.0, marginB: 1.0,
   pageNum: "bottom-center", refStyle: "APA",
-  student: "Thit Sar", course: "BBA Program", module: "", teacher: ""
+  student: "", course: "", module: "", teacher: ""
 };
 
 var DEFAULT_RUBRIC = [
@@ -779,14 +798,14 @@ var DEFAULT_RUBRIC = [
 ].join("\n");
 
 var DEFAULT_META = {
-  title: "Thitsar Financial Accounting", module: "", lecturer: "",
-  student: "Thit Sar", batch: "L-4 B-24 On Campus", date: ""
+  title: "", module: "", lecturer: "",
+  student: "", batch: "", date: ""
 };
 
 var DEFAULT_LINKS = {
-  fin: "https://classroom.google.com/c/ODc0NTM4MzQzNDE1",
-  aw: "https://classroom.google.com/c/NzM0NzAzNTA4MDUy",
-  doc: "https://docs.google.com/document/d/1Kwxx0facxt8ZA5lcBJLG0Zu_AwrBGEAuD35kzMk3a9o/edit"
+  fin: "",
+  aw: "",
+  doc: ""
 };
 
 var S = {
@@ -800,6 +819,7 @@ var S = {
   meta: JSON.parse(JSON.stringify(DEFAULT_META)),
   checklist: { file: false, slides: false, sim: false, ai: false },
   links: JSON.parse(JSON.stringify(DEFAULT_LINKS)),
+  precheck: "",
   emailDirty: false,
   sections: [],            /* {heading, task, text, status, error} */
   generating: false,
@@ -1121,7 +1141,7 @@ function updateStatusCards(){
     var n = documentWordTotal();
     wc.textContent = n + (n === 1 ? " word" : " words");
     if (!n) ws.textContent = "No document text yet";
-    else if (n >= 2000 && n <= 3500) ws.textContent = "Within NMA BBA limit";
+    else if (n >= 2000 && n <= 3500) ws.textContent = "Within the target band";
     else if (n < 2000) ws.textContent = (2000 - n) + " words below the 2,000 minimum";
     else ws.textContent = (n - 3500) + " words over the 3,500 maximum";
   }
@@ -1135,6 +1155,18 @@ function updateStatusCards(){
       cov.textContent = "No brief yet";
       cs.textContent = "Load a sample or paste a brief in tab 1.";
     }
+  }
+  updateStepTicks();
+}
+function updateStepTicks(){
+  var done1 = !!(S.parsedLoaded || ($("briefText") && $("briefText").value.trim()));
+  var anyDone = S.sections.some(function(s){ return s.status === "done"; });
+  var done4 = !!(S.checklist.file || S.checklist.slides || S.checklist.sim || S.checklist.ai || S.google.docId);
+  var states = [done1, anyDone, anyDone, done4];
+  for (var i = 1; i <= 4; i++){
+    var b = $("tab-" + i); if (!b) continue;
+    b.setAttribute("data-done", states[i - 1] ? "1" : "0");
+    var st = $("tabState-" + i); if (st) st.textContent = states[i - 1] ? "Step completed." : "";
   }
 }
 function renderChips(){
@@ -1266,10 +1298,10 @@ function doParse(autoGenerate){
 /* ---------- Built-in sample briefs ---------- */
 var SAMPLE_FINACC = [
   "ATHE Level 4 Diploma in Business and Management, Assignment Brief",
-  "Module: LV 4005 Financial and Management Accounting Techniques for Managers",
-  "Lecturer: Daw Kay Thi Khaing",
+  "Module: Financial and Management Accounting Techniques for Managers",
+  "SAMPLE BRIEF (practice): a Financial Accounting assignment brief in ATHE style. Edit it freely.",
   "Submission date: 30/10/2026",
-  "Word count: 3000 words (school band: 2000 to 3500 words)",
+  "Required word count: 3,000 words (typical band: 2,000 to 3,500 words)",
   "",
   "Task 1: Prepare speaker notes and slides comparing management and financial accounting systems and analysing techniques used for recording financial information.",
   "- Merit: Assess stakeholder needs using a specific business example.",
@@ -1285,7 +1317,7 @@ var SAMPLE_FINACC = [
 ].join("\n");
 
 var SAMPLE_PPL = [
-  "SAMPLE BRIEF for practice only. This is a generic example in ATHE style, not an official NMA College brief. Edit it freely.",
+  "SAMPLE BRIEF for practice only. This is a generic example in ATHE style, not an official school brief. Edit it freely.",
   "Module: People in Organizations (Sample)",
   "Word count: 2500 words",
   "",
@@ -1298,21 +1330,21 @@ var SAMPLE_PPL = [
 
 function loadSampleFin(){
   $("briefText").value = SAMPLE_FINACC;
-  S.meta.title = "Thitsar Financial Accounting";
-  S.meta.module = "LV 4005 Financial and Management Accounting Techniques for Managers";
-  S.meta.lecturer = "Daw Kay Thi Khaing";
-  S.meta.student = "Thit Sar";
-  S.meta.batch = "L-4 B-24 On Campus";
+  S.meta.title = "";
+  S.meta.module = "Financial and Management Accounting Techniques for Managers";
+  S.meta.lecturer = "";
+  S.meta.student = "";
+  S.meta.batch = "";
   S.meta.date = "30/10/2026";
   fillMetaUI();
-  if (doParse(false)) setStatus("Year 1 Financial Accounting brief loaded: 4 tasks, 2 Merit and 2 Distinction extensions. Check the details, then write from tab 2.");
+  if (doParse(false)) setStatus("Financial Accounting sample loaded: 4 tasks, 2 Merit and 2 Distinction extensions detected. Check the details, then write from tab 2.");
 }
 function loadSamplePpl(){
   $("briefText").value = SAMPLE_PPL;
   S.meta.title = "People in Organizations (Sample)";
   S.meta.module = "People in Organizations (Sample)";
   fillMetaUI();
-  if (doParse(false)) setStatus("Sample brief loaded for practice. It is a generic ATHE style example, not an official NMA brief.");
+  if (doParse(false)) setStatus("Sample brief loaded for practice. It is a generic ATHE style example, not an official school brief.");
 }
 
 /* ---------- Tab 3: formatted document preview ---------- */
@@ -1424,24 +1456,26 @@ function shortModuleName(m){
   return s || "Assignment";
 }
 function buildEmail(force){
-  var suEl = $("emailSubject"), bodyEl = $("emailBody");
+  var suEl = $("emailSubject"), bodyEl = $("emailBody"), toEl = $("emailTo");
   if (!suEl || !bodyEl) return;
+  if (toEl && document.activeElement !== toEl) toEl.value = S.precheck || "";
   if (S.emailDirty && !force) return;
-  var student = S.meta.student || "Thit Sar";
+  var student = S.meta.student || "[Your name]";
+  var batch = S.meta.batch || "[Batch]";
   var moduleFull = String(S.meta.module || S.parsed.subject || "").replace(/^module\s*:\s*/i, "").trim();
   suEl.value = "For Assignment Review - " + shortModuleName(moduleFull) + " (" + student + ")";
   bodyEl.value = [
-    "Dear Officials from NMA College,",
+    "Dear Officials,",
     "",
     "I've attached my assignment file (" + exportFileName() + ") for you to review to check.",
     "",
-    "Here's my student and assignment details.",
+    "Here are my student and assignment details.",
     "",
     student,
-    "Year (1) Batch-24",
-    moduleFull || "Assignment",
+    batch,
+    moduleFull || "[Module]",
     "",
-    "Contact me via 09 457 322 394 & this email address.",
+    "Contact me via this email address.",
     "",
     "Thank you for reviewing my assignment."
   ].join("\n");
@@ -1462,7 +1496,7 @@ function fillChecklist(){
 function bindChecklist(){
   Object.keys(CHECK_IDS).forEach(function(k){
     var el = $(CHECK_IDS[k]); if (!el) return;
-    el.addEventListener("change", function(){ S.checklist[k] = el.checked; saveLS(LS_CHECK, S.checklist); });
+    el.addEventListener("change", function(){ S.checklist[k] = el.checked; saveLS(LS_CHECK, S.checklist); updateStepTicks(); });
   });
 }
 function fillLinks(){
@@ -1549,7 +1583,7 @@ function buildSystemPrompt(){
   var rubric = (S.parsed.criteria && S.parsed.criteria.trim()) ?
     ("Marking criteria from the brief:\n" + S.parsed.criteria + "\n\nRubric from settings:\n" + S.rubric) : S.rubric;
   return [
-    "You are an expert academic writer helping a BBA student at NMA College.",
+    "You are an expert academic writer helping a BBA student.",
     formatProfileText(),
     "",
     "SCORING RUBRIC. Write so this work scores at the top band against it:",
@@ -2116,6 +2150,7 @@ function init(){
   S.meta = Object.assign({}, DEFAULT_META, loadLS(LS_META, {}));
   S.checklist = Object.assign({}, S.checklist, loadLS(LS_CHECK, {}));
   S.links = Object.assign({}, DEFAULT_LINKS, loadLS(LS_LINKS, {}));
+  S.precheck = loadLS(LS_PRECHECK, "");
   var theme = "light";
   try { theme = localStorage.getItem("ag.theme") || "light"; } catch(e){}
   applyTheme(theme);
@@ -2124,6 +2159,7 @@ function init(){
   applyMetaToState();
   fillChecklist();
   fillLinks();
+  var etEl = $("emailTo"); if (etEl) etEl.value = S.precheck || "";
   renderChips();
   updateStatusCards();
   buildEmail(true);
@@ -2237,6 +2273,8 @@ function init(){
   ["emailSubject","emailBody"].forEach(function(id){
     $(id).addEventListener("input", function(){ S.emailDirty = true; });
   });
+  $("emailTo").addEventListener("input", function(){ S.precheck = this.value.trim(); saveLS(LS_PRECHECK, S.precheck); });
+  $("briefText").addEventListener("input", updateStepTicks);
   $("copyEmailBtn").addEventListener("click", function(){
     copyText("Subject: " + $("emailSubject").value + "\n\n" + $("emailBody").value, "emailMsg", "Email text copied. Paste it into your email and attach the Word file.");
   });
