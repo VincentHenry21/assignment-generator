@@ -484,14 +484,26 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
       <h2>AI Writer</h2>
       <p class="hint">The writer produces one section per task, follows your format profile and rubric from Settings, runs the humanizer pass on every section, and cites only real, well known published sources in APA style.</p>
       <div class="msg info show" id="genNoKey">
-        <b>No Anthropic API key yet.</b> Generation uses the Muse API from Anthropic, with your own key:
-        <ol style="margin:8px 0 4px 18px;padding:0">
-          <li>Open the <a href="https://console.anthropic.com/" target="_blank" rel="noopener">Claude Console</a> and sign in (or create an account).</li>
-          <li>Open <b>API Keys</b>, click <b>Create Key</b>, and copy the key.</li>
-          <li>Open <b>Settings</b> (top right), paste it into the Anthropic API key field, and come back here.</li>
-        </ol>
-        Note: the Muse API is a paid developer API. It is separate from a Claude subscription, and your Console account needs credit on it before generation will run.<br>
-        The key is stored only in this browser (localStorage). It is never sent anywhere except to Anthropic when you generate.
+        <div id="genGuideGemini">
+          <b>No Google Gemini API key yet.</b> Generation uses the Google Gemini API, with your own key:
+          <ol style="margin:8px 0 4px 18px;padding:0">
+            <li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a> and sign in with your Google account.</li>
+            <li>Click <b>Create API key</b>, and copy the key.</li>
+            <li>Open <b>Settings</b> (top right), paste it into the Google Gemini API key field, and come back here.</li>
+          </ol>
+          Note: the Gemini API has a free tier with daily limits, which covers normal student use at no cost. You can switch to Anthropic Muse any time in Settings.<br>
+          The key is stored only in this browser (localStorage). It is never sent anywhere except to Google when you generate.
+        </div>
+        <div id="genGuideClaude" class="hidden">
+          <b>No Anthropic API key yet.</b> Generation uses the Muse API from Anthropic, with your own key:
+          <ol style="margin:8px 0 4px 18px;padding:0">
+            <li>Open the <a href="https://console.anthropic.com/" target="_blank" rel="noopener">Claude Console</a> and sign in (or create an account).</li>
+            <li>Open <b>API Keys</b>, click <b>Create Key</b>, and copy the key.</li>
+            <li>Open <b>Settings</b> (top right), paste it into the Anthropic API key field, and come back here.</li>
+          </ol>
+          Note: the Muse API is a paid developer API. It is separate from a Claude subscription, and your Console account needs credit on it before generation will run.<br>
+          The key is stored only in this browser (localStorage). It is never sent anywhere except to Anthropic when you generate.
+        </div>
       </div>
       <div id="genControls" class="hidden">
         <div class="row" style="margin-top:2px">
@@ -665,17 +677,39 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
   </div>
   <p class="hint">Everything here is saved in this browser only (localStorage).</p>
 
-  <h3>AI writing (Anthropic Muse)</h3>
-  <label class="f" for="setApiKey">Anthropic API key</label>
-  <input class="in" id="setApiKey" type="password" autocomplete="off" placeholder="Paste your key from the Claude Console">
-  <label class="f" for="setModel">Model</label>
-  <select class="in" id="setModel">
-    <option value="claude-sonnet-4-5">claude-sonnet-4-5 (Sonnet 4.5, default)</option>
-    <option value="claude-opus-4-1">claude-opus-4-1 (Opus 4.1)</option>
-    <option value="claude-haiku-4-5">claude-haiku-4-5 (Haiku 4.5, fastest)</option>
+  <h3>AI writing engine</h3>
+  <label class="f" for="setEngine">AI writing engine</label>
+  <select class="in" id="setEngine">
+    <option value="gemini">Google Gemini (free)</option>
+    <option value="claude">Anthropic Muse</option>
   </select>
-  <label class="f" for="setModelCustom">Custom model (optional, overrides the list above)</label>
-  <input class="in" id="setModelCustom" type="text" autocomplete="off" placeholder="Leave empty to use the list">
+  <div id="geminiFields">
+    <p style="font-weight:700;margin:14px 0 2px">Google Gemini</p>
+    <label class="f" for="setGeminiKey">Google Gemini API key</label>
+    <input class="in" id="setGeminiKey" type="password" autocomplete="off" placeholder="Paste your key from Google AI Studio">
+    <p class="hint hidden" id="geminiEmbeddedNote" style="margin:4px 0 0">A built-in key is active. Paste your own key to override it.</p>
+    <label class="f" for="setGeminiModel">Gemini model</label>
+    <select class="in" id="setGeminiModel">
+      <option value="gemini-2.5-flash">gemini-2.5-flash (default)</option>
+      <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite</option>
+      <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+    </select>
+    <label class="f" for="setGeminiModelCustom">Custom Gemini model (optional, overrides the list above)</label>
+    <input class="in" id="setGeminiModelCustom" type="text" autocomplete="off" placeholder="Leave empty to use the list">
+  </div>
+  <div id="claudeFields" class="hidden">
+    <p style="font-weight:700;margin:14px 0 2px">Anthropic Muse</p>
+    <label class="f" for="setApiKey">Anthropic API key</label>
+    <input class="in" id="setApiKey" type="password" autocomplete="off" placeholder="Paste your key from the Claude Console">
+    <label class="f" for="setModel">Model</label>
+    <select class="in" id="setModel">
+      <option value="claude-sonnet-4-5">claude-sonnet-4-5 (Sonnet 4.5, default)</option>
+      <option value="claude-opus-4-1">claude-opus-4-1 (Opus 4.1)</option>
+      <option value="claude-haiku-4-5">claude-haiku-4-5 (Haiku 4.5, fastest)</option>
+    </select>
+    <label class="f" for="setModelCustom">Custom model (optional, overrides the list above)</label>
+    <input class="in" id="setModelCustom" type="text" autocomplete="off" placeholder="Leave empty to use the list">
+  </div>
 
   <div class="divider"></div>
   <h3>Google connection</h3>
@@ -722,6 +756,11 @@ footer.foot{color:var(--ink2);font-size:13px;text-align:center;padding:14px 0 0}
 
 var LS_SETTINGS = "ag.settings.v1";
 var LS_ANTHROPIC_KEY = "asngen:anthropicKey";
+var LS_GEMINI_KEY = "asngen:geminiKey";
+/* Built-in Gemini key slot. This stays EMPTY in the source file by design:
+   the real key is inserted only in the deployed copy, never in this file.
+   A key the user saves in Settings always overrides the built-in one. */
+var EMBEDDED_GEMINI_KEY = "";
 var LS_PROFILE  = "ag.profile.v1";
 var LS_RUBRIC   = "ag.rubric.v1";
 var LS_META     = "ag.meta.v1";
@@ -751,8 +790,9 @@ var DEFAULT_LINKS = {
 };
 
 var S = {
-  settings: { clientId: "", model: "claude-sonnet-4-5", modelCustom: "" },
+  settings: { clientId: "", engine: "gemini", model: "claude-sonnet-4-5", modelCustom: "", geminiModel: "gemini-2.5-flash", geminiModelCustom: "" },
   anthropicKey: "",
+  geminiKey: "",
   profile: JSON.parse(JSON.stringify(DEFAULT_PROFILE)),
   rubric: DEFAULT_RUBRIC,
   parsed: { title: "", subject: "", words: 0, deadline: "", tasks: [], criteria: "", merit: 0, distinction: 0 },
@@ -961,9 +1001,13 @@ function goStep(n){
 /* ---------- Settings ---------- */
 function collectSettingsFromUI(){
   S.anthropicKey = $("setApiKey").value.trim();
+  S.geminiKey = $("setGeminiKey").value.trim();
+  S.settings.engine = ($("setEngine").value === "claude") ? "claude" : "gemini";
   S.settings.clientId = $("setClientId").value.trim();
   S.settings.model = $("setModel").value || "claude-sonnet-4-5";
   S.settings.modelCustom = $("setModelCustom").value.trim();
+  S.settings.geminiModel = $("setGeminiModel").value || "gemini-2.5-flash";
+  S.settings.geminiModelCustom = $("setGeminiModelCustom").value.trim();
   S.profile.font = $("pfFont").value.trim() || DEFAULT_PROFILE.font;
   S.profile.refStyle = $("pfRefStyle").value.trim() || "APA";
   S.profile.headingSize = parseFloat($("pfHeadSize").value) || 14;
@@ -987,11 +1031,17 @@ function collectSettingsFromUI(){
   if ($("mTitle")) fillMetaUI();
 }
 function fillSettingsUI(){
+  $("setEngine").value = (S.settings.engine === "claude") ? "claude" : "gemini";
+  $("setGeminiKey").value = S.geminiKey || "";
+  $("setGeminiModel").value = S.settings.geminiModel || "gemini-2.5-flash";
+  if (!$("setGeminiModel").value) $("setGeminiModel").value = "gemini-2.5-flash"; /* stored model no longer listed: fall back to default */
+  $("setGeminiModelCustom").value = S.settings.geminiModelCustom || "";
   $("setApiKey").value = S.anthropicKey || "";
   $("setClientId").value = S.settings.clientId || "";
   $("setModel").value = S.settings.model || "claude-sonnet-4-5";
   if (!$("setModel").value) $("setModel").value = "claude-sonnet-4-5"; /* stored model no longer listed (e.g. an old one): fall back to default */
   $("setModelCustom").value = S.settings.modelCustom || "";
+  syncEngineFields();
   $("pfFont").value = S.profile.font;
   $("pfRefStyle").value = S.profile.refStyle;
   $("pfHeadSize").value = S.profile.headingSize;
@@ -1011,6 +1061,7 @@ function fillSettingsUI(){
 function persistAll(){
   collectSettingsFromUI();
   try { localStorage.setItem(LS_ANTHROPIC_KEY, S.anthropicKey || ""); } catch(e){ /* storage full or blocked */ }
+  try { localStorage.setItem(LS_GEMINI_KEY, S.geminiKey || ""); } catch(e){ /* storage full or blocked */ }
   saveLS(LS_SETTINGS, S.settings);
   saveLS(LS_PROFILE, S.profile);
   saveLS(LS_RUBRIC, S.rubric);
@@ -1434,12 +1485,58 @@ function bindLinks(){
 
 <script>
 "use strict";
-/* ---------- Generation (Anthropic Muse; engine swapped from Gemini) ---------- */
+/* ---------- Generation (engine switchable: Google Gemini or Anthropic Claude) ---------- */
+function activeEngine(){
+  return (S.settings && S.settings.engine === "claude") ? "claude" : "gemini";
+}
+function engineLabel(){
+  return activeEngine() === "claude" ? "Anthropic Muse" : "Google Gemini";
+}
+function effectiveGeminiModel(){
+  var custom = (S.settings.geminiModelCustom || "").trim();
+  if (custom) return custom;
+  return S.settings.geminiModel || "gemini-2.5-flash";
+}
+function activeModel(){
+  return activeEngine() === "claude" ? effectiveModel() : effectiveGeminiModel();
+}
+function storedGeminiKey(){
+  return S.geminiKey || ($("setGeminiKey") && $("setGeminiKey").value.trim()) || "";
+}
+function effectiveGeminiKey(){
+  /* Resolution order: the user's saved key first, then the built-in key. */
+  var stored = storedGeminiKey();
+  if (stored) return stored;
+  return (typeof EMBEDDED_GEMINI_KEY !== "undefined" && EMBEDDED_GEMINI_KEY) ? EMBEDDED_GEMINI_KEY : "";
+}
+function embeddedKeyActive(){
+  return !storedGeminiKey() && !!(typeof EMBEDDED_GEMINI_KEY !== "undefined" && EMBEDDED_GEMINI_KEY);
+}
+function activeKey(){
+  if (activeEngine() === "claude")
+    return S.anthropicKey || ($("setApiKey") && $("setApiKey").value.trim()) || "";
+  return effectiveGeminiKey();
+}
+function syncEngineFields(){
+  var eng = activeEngine();
+  var gf = $("geminiFields"), cf = $("claudeFields");
+  if (gf) gf.classList.toggle("hidden", eng !== "gemini");
+  if (cf) cf.classList.toggle("hidden", eng !== "claude");
+}
 function refreshGenGate(){
-  var hasKey = !!(S.anthropicKey || ($("setApiKey") && $("setApiKey").value.trim()));
+  var eng = activeEngine();
+  var hasKey = !!activeKey();
   $("genNoKey").classList.toggle("hidden", hasKey);
   $("genNoKey").classList.toggle("show", !hasKey);
   $("genControls").classList.toggle("hidden", !hasKey);
+  var gg = $("genGuideGemini"), gc = $("genGuideClaude");
+  if (gg) gg.classList.toggle("hidden", eng !== "gemini");
+  if (gc) gc.classList.toggle("hidden", eng !== "claude");
+  var gm = $("genMeta");
+  if (gm) gm.textContent = hasKey ? ("Engine: " + engineLabel() + " · Model: " + activeModel()) : "";
+  var en = $("geminiEmbeddedNote");
+  if (en) en.classList.toggle("hidden", !embeddedKeyActive());
+  syncEngineFields();
 }
 function formatProfileText(){
   var p = S.profile;
@@ -1509,6 +1606,39 @@ function claudeCall(systemText, userText){
       return text;
     });
   });
+}
+function geminiCall(systemText, userText){
+  S.abort = ("AbortController" in window) ? new AbortController() : null;
+  var model = effectiveGeminiModel();
+  var prompt = systemText + "\n\n" + userText;
+  return fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": effectiveGeminiKey()
+    },
+    signal: S.abort ? S.abort.signal : undefined,
+    body: JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 8192 }
+    })
+  }).then(function(res){
+    return res.json().then(function(data){
+      if (!res.ok || (data && data.error)){
+        var msg = (data && data.error && data.error.message) ? data.error.message : ("HTTP " + res.status);
+        throw new Error("Gemini error: " + msg);
+      }
+      var cands = (data && data.candidates) || [];
+      var parts = (cands[0] && cands[0].content && cands[0].content.parts) || [];
+      var text = "";
+      parts.forEach(function(p){ if (p && p.text) text += p.text; });
+      if (!text) throw new Error("Gemini returned an empty section. Try again, or switch the model in Settings.");
+      return text;
+    });
+  });
+}
+function engineCall(systemText, userText){
+  return activeEngine() === "claude" ? claudeCall(systemText, userText) : geminiCall(systemText, userText);
 }
 function splitReferences(text){
   var m = text.match(/\n\s*References\s*\n/i);
@@ -1590,7 +1720,7 @@ function runSection(idx, systemText){
     "\n\nWrite the section for this task now:\n" + sec.task +
     "\n\nTarget length for this section: about " + perTask + " words. Start with the heading line: " + sec.heading +
     "\nThen the section in prose paragraphs. Follow all system rules, including the References block at the end.";
-  return claudeCall(systemText, userText).then(function(raw){
+  return engineCall(systemText, userText).then(function(raw){
     /* Split the reference list off first so the humanizer pass never touches it. */
     var split = splitReferences(raw);
     sec.text = humanize(split.body);
@@ -1606,7 +1736,9 @@ function runSection(idx, systemText){
 }
 function generateAll(){
   syncLearnFromUI();
-  if (!S.anthropicKey){ refreshGenGate(); showMsg("genError", "Add your Anthropic API key in Settings first. The guide at the top of this tab explains how to get one from the Claude Console.", "err"); return; }
+  if (!activeKey()){ refreshGenGate(); showMsg("genError", activeEngine() === "claude" ?
+    "Add your Anthropic API key in Settings first. The guide at the top of this tab explains how to get one from the Claude Console." :
+    "Add your Google Gemini API key in Settings first. The guide at the top of this tab explains how to get a free one from Google AI Studio.", "err"); return; }
   if (!S.parsed.tasks.length){ showMsg("genError", "No tasks yet. Go back to tab 1 and add at least one task.", "err"); return; }
   showMsg("genError", "");
   S.generating = true; S.cancelRequested = false;
@@ -1630,7 +1762,7 @@ function generateAll(){
     var done = S.sections.filter(function(s){ return s.status === "done"; });
     if (S.cancelRequested) setStatus("Generation cancelled. Finished sections are kept in the editor.");
     else if (failed.length) showMsg("genError", "Some sections failed: " + failed.map(function(s){ return s.heading + " (" + (s.error || "error") + ")"; }).join("; ") + ". Use the retry button on a failed section.", "err");
-    else setStatus("Generation complete: " + done.length + " sections, " + $("totalWords").textContent + " words. Review and edit here, check tab 3, then export in tab 4.");
+    else setStatus("Generation complete: " + done.length + " sections, " + $("totalWords").textContent + " words, written with " + engineLabel() + " (" + activeModel() + "). Review and edit here, check tab 3, then export in tab 4.");
     if (done.length) renderEditor();
   });
 }
@@ -1975,8 +2107,10 @@ function applyTheme(t){
 /* ---------- Init ---------- */
 function init(){
   S.settings = Object.assign({}, S.settings, loadLS(LS_SETTINGS, {}));
-  if ("apiKey" in S.settings){ delete S.settings.apiKey; saveLS(LS_SETTINGS, S.settings); } /* legacy Gemini key entry: removed, the Anthropic key lives under its own storage key */
+  if ("apiKey" in S.settings){ delete S.settings.apiKey; saveLS(LS_SETTINGS, S.settings); } /* legacy settings entry only; both API keys live under their own asngen: storage keys and are never deleted here */
+  if (S.settings.engine !== "claude") S.settings.engine = "gemini"; /* Gemini is the default engine */
   try { S.anthropicKey = localStorage.getItem(LS_ANTHROPIC_KEY) || ""; } catch(e){ S.anthropicKey = ""; }
+  try { S.geminiKey = localStorage.getItem(LS_GEMINI_KEY) || ""; } catch(e){ S.geminiKey = ""; }
   S.profile = Object.assign({}, DEFAULT_PROFILE, loadLS(LS_PROFILE, {}));
   S.rubric = loadLS(LS_RUBRIC, DEFAULT_RUBRIC);
   S.meta = Object.assign({}, DEFAULT_META, loadLS(LS_META, {}));
@@ -2009,7 +2143,7 @@ function init(){
     $("saveNote").textContent = "Saved.";
     setStatus("Settings saved in this browser.");
   });
-  ["setApiKey","setClientId","setModel","setModelCustom","rubricText"].forEach(function(id){
+  ["setApiKey","setClientId","setModel","setModelCustom","rubricText","setEngine","setGeminiKey","setGeminiModel","setGeminiModelCustom"].forEach(function(id){
     $(id).addEventListener("change", function(){ persistAll(); refreshGenGate(); });
   });
 
@@ -2144,6 +2278,10 @@ window.AssignmentGen = {
   splitReferences: splitReferences, buildDocxBytes: buildDocxBytes,
   buildGmailUrl: buildGmailUrl, countWords: countWords,
   loadSampleFin: loadSampleFin, loadSamplePpl: loadSamplePpl,
+  activeEngine: activeEngine, effectiveGeminiModel: effectiveGeminiModel,
+  effectiveGeminiKey: effectiveGeminiKey, embeddedKeyActive: embeddedKeyActive,
+  activeModel: activeModel, refreshGenGate: refreshGenGate,
+  geminiCall: geminiCall, claudeCall: claudeCall, generateAll: generateAll,
   state: S
 };
 
